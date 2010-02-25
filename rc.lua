@@ -87,44 +87,11 @@ separator = widget({ type = "textbox" })
 separator.text  = " | "
 --- }}}
 
--- {{{ Wibox
--- Create a textclock widget
-mytextclock = awful.widget.textclock({ align = "right" })
-
--- Memory widget
-memwidget = awful.widget.progressbar({ layout = awful.widget.layout.horizontal.rightleft})
-memwidget:set_width(8)
-memwidget:set_height(18)
-memwidget:set_vertical(true)
-memwidget:set_background_color("#494B4F")
-memwidget:set_border_color("#000000")
-memwidget:set_color("#AECF96")
-memwidget:set_gradient_colors({ "#AECF96", "#88A175", "#FF5656"})
-vicious.register(memwidget, vicious.widgets.mem, "$1", 17)
-
--- CPU widget
-cpuwidget = awful.widget.graph({ layout = awful.widget.layout.horizontal.rightleft})
-cpuwidget:set_width(50)
-cpuwidget:set_height(18)
-cpuwidget:set_border_color("#000000")
-cpuwidget:set_background_color("#494B4F")
-cpuwidget:set_color("#FF5656")
-cpuwidget:set_gradient_colors({ "#FF5656", "#88A175", "#AECF96" })
-vicious.register(cpuwidget, vicious.widgets.cpu, "$1", 5)
-
--- cpu info widget
-cpuinfo = widget({ type = "textbox", layout = awful.widget.layout.horizontal.rightleft})
--- cpuinfo.width = 5
--- cpuinfo:set_height(18)
--- cpuinfo:set_border_color("#000000")
-cpuinfo.background_color = "#494B4F"
--- cpuinfo:set_color("#FF5656")
--- cpuinfo:set_gradient_colors({ "#FF5656", "#88A175", "#AECF96" })
-vicious.register(cpuinfo, vicious.widgets.cpufreq, 
-	function(widget, args)	
-		return string.format("%5i MhZ", args[1])
-end, 7, "cpu0")
-
+-- {{{ Widgets
+require("mywidgets/textclock")
+require("mywidgets/mem")
+require("mywidgets/cpu")
+require("mywidgets/cpufreq")
 require("mywidgets/weather")
 require("mywidgets/network")
 
@@ -200,13 +167,13 @@ for s = 1, screen.count() do
             layout = awful.widget.layout.horizontal.leftright
         },
         mylayoutbox[s], separator,
-        mytextclock, separator,
+        w_textclock, separator,
 		w_network_down, icon_network_down, 
 		w_network_up, icon_network_up, separator,
 		w_weather, icon_weather, separator,
-		memwidget, separator,
-		cpuwidget, separator,
-		cpuinfo, separator,
+		w_mem, separator,
+		w_cpu, separator,
+		w_cpufreq, separator,
         s == 1 and mysystray or nil,
         mytasklist[s],
         layout = awful.widget.layout.horizontal.rightleft
