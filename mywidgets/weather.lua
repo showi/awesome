@@ -21,7 +21,7 @@ vicious.register(w_weather, vicious.widgets.weather,
         if not weather then 
             return "NoData"
         end
-		weather = string.match(weather, "^([%a%s]+)([;%a%s]*)$")
+		weather = string.match(weather, "^([%a%s]+)([,;%a%s]*)$")
 		if weather then
 			weather = string.lower(weather)	
 			local imgname = string.gsub(weather, " ", "_") .. ".png"
