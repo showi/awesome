@@ -2,6 +2,8 @@ require("myfunc")
 
 -- Variables
 local img_dir = awful.util.getdir("config") .. "/img/weather/"
+local station = "LSGC"
+local refresh = 29
 
 -- Weather icon (for systray)
 icon_weather = widget({type = "imagebox", layout = awful.widget.layout.horizontal.rightleft})
@@ -19,7 +21,9 @@ vicious.register(w_weather, vicious.widgets.weather,
         if not weather then 
             return "NoData"
         end
-		if string.find(weather, "^[%a%s]+$") then
+		weather = string.match(weather, "^([%a%s]+)([;%a%s]*)$")
+		if weather then
+			weather = string.lower(weather)	
 			local imgname = string.gsub(weather, " ", "_") .. ".png"
 			imgpath = img_dir .. imgname
 			if not file_exists(imgpath) then
@@ -31,7 +35,7 @@ vicious.register(w_weather, vicious.widgets.weather,
 		end
 		icon_weather.image = image(imgpath)
         return string.format("%2i°C", args["{tempc}"])
-end, 29, "LSGC")
+end, refresh, station)
 
 -- Creating tooltip
 local t_weather = awful.tooltip({

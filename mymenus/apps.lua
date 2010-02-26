@@ -13,5 +13,8 @@
     { "Graphism", {
         {"Gimp", "gimp"}
     }},
+    { "Music", {
+        {"Gmpc", "gmpc"}
+    }},
 }
 

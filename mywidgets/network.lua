@@ -1,3 +1,4 @@
+require("myfunc")
 -- helper
 function nicetx(args, ifa, tx)
 	local k = ifa .. " " .. tx .. "_b"
@@ -6,13 +7,13 @@ function nicetx(args, ifa, tx)
 	local giga = mega * 1024
 	local v = tonumber(args["{"..k.."}"])
 	if v >= giga then	
-		return string.format("%4.1fGb", v / giga)
+		return string.format("%.1fGb", v / giga)
 	elseif v >= mega then
-		return string.format("%4.fMb", v / mega)
+		return string.format("%.1fMb", v / mega)
 	elseif v >= kilo then
-		return string.format("%4.1fKb", v / kilo)
+		return string.format("%.1fKb", v / kilo)
 	else
-		return string.format("%4.1fb ", v)
+		return string.format("%.1fb", v)
 	end
 end
 
@@ -20,7 +21,7 @@ end
 local img_dir = awful.util.getdir("config") .. "/img/"
 local w_layout = awful.widget.layout.horizontal.rightleft
 local ifa = "eth0"
-local update = 1 
+local update = 3 
 
 -- Icons
 icon_network_up = widget({type = "imagebox", layout = w_layout })
