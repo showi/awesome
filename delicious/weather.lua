@@ -1,7 +1,13 @@
+-- Check that vicious is loaded
+if not vicious then
+	print("You need vicious library to use delicious")
+end
+
 local setmetatable = setmetatable
+local vicious = vicious
 local awful = awful
 local widget = widget
-local vicious = vicious
+
 local string = string
 local print = print
 local image = image
@@ -9,6 +15,7 @@ local os = os
 local wibox = wibox 
 local trim = trim
 local file_exists = file_exists
+
 module ("delicious.weather")
 local station = ""
 local refresh = 29
@@ -16,19 +23,14 @@ local img_dir = awful.util.getdir("config") .. "/img/weather/"
 local w_weather = nil
 local t_weather = nil
 local registered = nil
-
--- Weather icon (for systray)
 local icon_weather = widget({type = "imagebox", layout = awful.widget.layout.horizontal.rightleft})
-icon_weather.image = img_weather_na
 
--- Enable caching
-vicious.enable_caching(vicious.widgets.weather)
 
 local function img_from_string(args) 
-	if not args then
-		return nil
-	end
 	local icon = img_dir .. "na.png"
+	if not args then
+		return image(icon)
+	end
 	local string = args["{weather}"]
 	if  not string or string == "N/A" then
 		string = args["{sky}"]
@@ -49,7 +51,9 @@ end
 local function register(station, refresh)
 	if registered then
 		vicious.unregister(vicious.weather, 0,registered)
+		registered = nil
 	end
+	w_weather = widget({ type = "textbox", layout = awful.widget.layout.horizontal.rightleft})
 	registered = vicious.register(w_weather, vicious.widgets.weather, 
     	function(widget, args)
     	    icon_weather.image = img_from_string(args)
@@ -89,11 +93,16 @@ end
 
 -- Creating widget
 local function create_widget (station, refresh)
-	w_weather = widget({ type = "textbox", layout = awful.widget.layout.horizontal.rightleft})
+-- Enable caching
+	vicious.enable_caching(vicious.widgets.weather)
 	register(station, refresh)
 end
 
 function display(_station, _refresh)
+	if not vicious or not vicious.widgets.weather then
+		print("You need vicious library and vicious.weather enable in vicious/init.lua")
+		return
+	end
 	if not w_weather then
 		create_widget(_station , _refresh)
 		register(_station, _refresh)
@@ -102,5 +111,4 @@ function display(_station, _refresh)
 	return {w_weather, icon_weather, layout = awful.widget.layout.horizontal.rightleft}
 end
 
-
-setmetatable(_M, { __call = function(_, ...) return display(...) end })
+-- setmetatable(_M, { __call = function(_, ...) return display(...) end })
