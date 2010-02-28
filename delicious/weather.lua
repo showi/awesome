@@ -56,6 +56,14 @@ local function register(station, refresh)
 	w_weather = widget({ type = "textbox", layout = awful.widget.layout.horizontal.rightleft})
 	registered = vicious.register(w_weather, vicious.widgets.weather, 
     	function(widget, args)
+	        local c = vicious.get_cache(vicious.widgets.weather) -- get_cache is not in vicious 
+			if c then
+				if c.data["{tempc}"] ~= "N/A" then
+					if not args or args["{tempc}"] == "N/A" then
+						return
+					end 
+				end
+			end	
     	    icon_weather.image = img_from_string(args)
     	    if string.match(args["{tempc}"], "%d+") then
 				return string.format("%2i°C", args["{tempc}"])
@@ -69,7 +77,7 @@ local function create_tooltip()
 	t_weather = awful.tooltip({
 	    obj = {k},
 	    timer_function = function()
-	        c = vicious.get_cache(vicious.widgets.weather) -- get_cache is not in vicious 
+	        local c = vicious.get_cache(vicious.widgets.weather) -- get_cache is not in vicious 
 	        if c == nil then
 	            return "No data in cache"
 	        end 
