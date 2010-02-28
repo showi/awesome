@@ -9,6 +9,13 @@ require("naughty")
 -- Widget library
 require("vicious")
 
+
+local udata = {
+	weather = {
+		station = "LFPO",
+		refresh = 29
+	}
+}
 -- {{{ Variable definitions
 -- Themes define colours, icons, and wallpapers
 beautiful.init("/usr/local/share/awesome/themes/zenburn/theme.lua")
@@ -92,8 +99,14 @@ require("mywidgets/textclock")
 require("mywidgets/mem")
 require("mywidgets/cpu")
 require("mywidgets/cpufreq")
-require("mywidgets/weather")
+--require("mywidgets/weather")
 require("mywidgets/network")
+
+require("delicious")
+
+--w_test = widget({ type = "textbox" })
+--w_test.text = delicious.weather.display()
+
 
 -- Create a systray
 mysystray = widget({ type = "systray" })
@@ -167,10 +180,13 @@ for s = 1, screen.count() do
             layout = awful.widget.layout.horizontal.leftright
         },
         mylayoutbox[s], separator,
-        w_textclock, separator,
+        w_textclock, separator, w_test,
 		w_network_down, icon_network_down, 
 		w_network_up, icon_network_up, separator,
-		w_weather, icon_weather, separator,
+		-- w_weather, icon_weather, separator,
+		--delicious.weather.display("LSGC", 29), separator, -- ch 
+		delicious.weather.display(udata.weather.station, udata.weather.refresh), separator, -- paris le bourget 
+		--delicious.weather.display("LFPO", 5), separator, -- paris le bourget 
 		w_mem, separator,
 		w_cpu, separator,
 		w_cpufreq, separator,

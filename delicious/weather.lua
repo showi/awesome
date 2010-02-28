@@ -7,8 +7,9 @@ local print = print
 local image = image
 local os = os 
 local wibox = wibox 
+local trim = trim
+local file_exists = file_exists
 module ("delicious.weather")
-
 local station = ""
 local refresh = 29
 local img_dir = awful.util.getdir("config") .. "/img/weather/"
@@ -23,31 +24,35 @@ icon_weather.image = img_weather_na
 -- Enable caching
 vicious.enable_caching(vicious.widgets.weather)
 
+local function img_from_string(args) 
+	if not args then
+		return nil
+	end
+	local icon = img_dir .. "na.png"
+	local string = args["{weather}"]
+	if  not string or string == "N/A" then
+		string = args["{sky}"]
+	end
+	--string = " partly cloudy , zefez ; ezrez r"
+   	string = string.match(string, "^%s*([%a%s]+)%s*([,;%a%s]*)$")
+	if string then
+		string = trim (string)
+		string = string.gsub(string, "%s", "_") .. ".png"
+		local iconpath = img_dir .. string
+		if file_exists(iconpath) then
+			icon = iconpath
+		end
+	end
+	return image(icon)
+end
+
 local function register(station, refresh)
 	if registered then
 		vicious.unregister(vicious.weather, 0,registered)
 	end
 	registered = vicious.register(w_weather, vicious.widgets.weather, 
     	function(widget, args)
-    	    local weather = args["{weather}"]
-    	    local imgpath = img_dir .. "na.png"
-    	    if not weather then 
-    	        return "NoData"
-    	    end 
-    	    weather = string.match(weather, "^([%a%s]+)([,;%a%s]*)$")
-    	    if weather then
-    	        weather = string.lower(weather) 
-    	        local imgname = string.gsub(weather, " ", "_") .. ".png"
-    	        imgpath = img_dir .. imgname
-    	        if not file_exists(imgpath) then
-    	            print("weather widget unknow weather: " .. imgpath)
-    	            imgpath = img_dir .. "na.png"
-    	        end 
-    	    else
-				print("weather: " .. args["{weather}"])
-    	        print("Invalid weather string")
-    	    end 
-    	    icon_weather.image = image(imgpath)
+    	    icon_weather.image = img_from_string(args)
     	    if string.match(args["{tempc}"], "%d+") then
 				return string.format("%2i°C", args["{tempc}"])
 			else

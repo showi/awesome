@@ -34,7 +34,11 @@ vicious.register(w_weather, vicious.widgets.weather,
 			print("Invalid weather string")
 		end
 		icon_weather.image = image(imgpath)
-        return string.format("%2i°C", args["{tempc}"])
+        if string.match(args["{tempc}"], "%d+") then
+			return string.format("%2i°C", args["{tempc}"])
+		else
+			return "N/A"
+		end
 end, refresh, station)
 
 -- Creating tooltip
