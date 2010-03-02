@@ -9,11 +9,15 @@ require("naughty")
 -- Widget library
 require("vicious")
 
+require("delicious")
 
 local udata = {
 	weather = {
 		station = "LFPO",
 		refresh = 29
+	},
+	cpufreq = {
+		cpu = "cpu0"
 	}
 }
 -- {{{ Variable definitions
@@ -98,11 +102,11 @@ separator.text  = " | "
 require("mywidgets/textclock")
 require("mywidgets/mem")
 require("mywidgets/cpu")
-require("mywidgets/cpufreq")
+--require("mywidgets/cpufreq")
 --require("mywidgets/weather")
 require("mywidgets/network")
 
-require("delicious")
+-- require("delicious")
 
 --w_test = widget({ type = "textbox" })
 --w_test.text = delicious.weather.display()
@@ -189,7 +193,7 @@ for s = 1, screen.count() do
 		--delicious.weather.display("LFPO", 5), separator, -- paris le bourget 
 		w_mem, separator,
 		w_cpu, separator,
-		w_cpufreq, separator,
+		delicious.cpufreq.display("cpu0"), separator,
         s == 1 and mysystray or nil,
         mytasklist[s],
         layout = awful.widget.layout.horizontal.rightleft

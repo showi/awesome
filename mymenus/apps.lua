@@ -9,6 +9,7 @@
     }},
     { "Tools", {
         {"Thunar", "thunar"},
+        {"Brasero", "brasero"},
     }},
     { "Graphism", {
         {"Gimp", "gimp"}

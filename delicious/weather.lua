@@ -1,8 +1,3 @@
--- Check that vicious is loaded
-if not vicious then
-	print("You need vicious library to use delicious")
-end
-
 local setmetatable = setmetatable
 local vicious = vicious
 local awful = awful
@@ -53,10 +48,12 @@ local function register(station, refresh)
 		vicious.unregister(vicious.weather, 0,registered)
 		registered = nil
 	end
+	print('create widget')
 	w_weather = widget({ type = "textbox", layout = awful.widget.layout.horizontal.rightleft})
 	registered = vicious.register(w_weather, vicious.widgets.weather, 
     	function(widget, args)
-	        local c = vicious.get_cache(vicious.widgets.weather) -- get_cache is not in vicious 
+	        print("refresh ");
+			local c = vicious.get_cache(vicious.widgets.weather) -- get_cache is not in vicious 
 			if c then
 				if c.data["{tempc}"] ~= "N/A" then
 					if not args or args["{tempc}"] == "N/A" then
@@ -103,7 +100,7 @@ end
 local function create_widget (station, refresh)
 -- Enable caching
 	vicious.enable_caching(vicious.widgets.weather)
-	register(station, refresh)
+--	register(station, refresh)
 end
 
 function display(_station, _refresh)
