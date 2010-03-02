@@ -115,6 +115,10 @@ require("mywidgets/network")
 -- Create a systray
 mysystray = widget({ type = "systray" })
 
+deli = {}
+deli.net = require("delicious.network")
+net_eth0 = deli.net.new("eth1", 5)
+
 -- Create a wibox for each screen and add it
 mywibox = {}
 mypromptbox = {}
@@ -185,8 +189,9 @@ for s = 1, screen.count() do
         },
         mylayoutbox[s], separator,
         w_textclock, separator, w_test,
-		w_network_down, icon_network_down, 
-		w_network_up, icon_network_up, separator,
+		--w_network_down, icon_network_down, 
+		--w_network_up, icon_network_up, separator,
+		net_eth0.widgets(), separator,
 		-- w_weather, icon_weather, separator,
 		--delicious.weather.display("LSGC", 29), separator, -- ch 
 		delicious.weather.display(udata.weather.station, udata.weather.refresh), separator, -- paris le bourget 
