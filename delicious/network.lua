@@ -1,22 +1,17 @@
 require("myfunc")
 
+-- Enable caching
+vicious.enable_caching(vicious.widgets.net)
+
 local M = {}
 M.mt = {}
 
 -- Variables
 local img_dir = awful.util.getdir("config") .. "/img/"
-local w_layout = awful.widget.layout.horizontal.rightleft
-
--- Icons
-local icon_up = widget({type = "imagebox", layout = w_layout })
-icon_up.image = image(img_dir .. "up.png")
-
-local icon_down= widget({type = "imagebox", layout = w_layout})
-icon_down.image = image(img_dir .. "down.png")
 
 -- Helper function that display scaled network rate from bytes
-local function nicetx(self, args, ifa, tx, p)
-	print("self: " .. tostring(self))
+local function nicetx(self, args, interface, tx, p)
+	--print("self: " .. tostring(self))
 	if not p then
 		p = 1
 	end
@@ -27,71 +22,69 @@ local function nicetx(self, args, ifa, tx, p)
 	local giga = mega * 1000
 	local v = tonumber(args["{"..k.."}"])
 	if not v then
-		return "No data"
+		return "b", "No data"
 	end
-	--v = math.random(0,1340992300)
-	if not self.icon_up then self.icon_up = widget({type = "imagebox"}) end
-	if not self.icon_down then self.icon_down = widget({type = "imagebox"}) end
 	if v >= giga then	
-		if tx == "up" then
-			self.icon_up.image = image(img_dir .. self.theme.images.up_gb)
-		else
-			self.icon_down.image = image(img_dir .. self.theme.images.down_gb)
-		end
-		return string.format("%."..p.."fGB", v / giga)
+		return "gb", string.format("%."..p.."f", v / giga) 
 	elseif v >= mega then
-		if tx == "up" then
-			self.icon_up.image = image(img_dir .. self.theme.images.up_mb)
-		else
-			self.icon_down.image = image(img_dir .. self.theme.images.down_mb)
-		end
-		return string.format("%."..p.."fMB", v / mega)
+		return "mb", string.format("%."..p.."f", v / mega) 
 	elseif v >= kilo then
-		if tx == "up" then
-			self.icon_up.image = image(img_dir .. self.theme.images.up_kb)
-		else
-			self.icon_down.image = image(img_dir .. self.theme.images.down_kb)
-		end
-		return string.format("%."..p.."fkB", v / kilo)
+		return "kb", string.format("%."..p.."f", v / kilo) 
 	else
-		if tx == "up" then
-			self.icon_up.image = image(img_dir .. self.theme.images.up_b)
-		else
-			self.icon_down.image = image(img_dir .. self.theme.images.down_b)
-		end
-		return string.format("%."..p.."fb", v)
+		return "b", string.format("%."..p.."f", v) 
 	end
 end
 
 
--- Enable caching
-vicious.enable_caching(vicious.widgets.net)
+local function set_icon(self, direction, unit)
+	if not self.icon_up then self.icon_up = widget({type = "imagebox"}) 
+		self.icon_up.width = 16
+	end
+	if not self.icon_down then self.icon_down = widget({type = "imagebox"}) 
+		self.icon_down.width = 16
+	end
+	--print("set_icon(" .. direction .. ", " .. unit .. ")")
+	if direction == "up" then
+		if unit == "gb" then
+			self.icon_up.image = image(img_dir .. self.theme.images.up_gb)
+		elseif unit == "mb" then
+			self.icon_up.image = image(img_dir .. self.theme.images.up_mb)
+		elseif unit == "kb" then
+			self.icon_up.image = image(img_dir .. self.theme.images.up_kb)
+		else
+			self.icon_up.image= image(img_dir .. self.theme.images.up_b)
+		end
+	else
+		if unit == "gb" then
+			self.icon_down.image= image(img_dir .. self.theme.images.down_gb)
+		elseif unit == "mb" then
+			self.icon_down.image = image(img_dir .. self.theme.images.down_mb)
+		elseif unit == "kb" then
+			self.icon_down.image = image(img_dir .. self.theme.images.down_kb)
+		else
+			self.icon_down.image = image(img_dir .. self.theme.images.down_b)
+		end
+	end
+end
 
 
-local function create_widget(self, param)
-	print("self: " .. tostring(self))
+local function create_widget(self, direction)
+	--print("self: " .. tostring(self))
 	local w = widget({ type = "textbox", layout = self.layout})
 	w.background_color = self.theme.background_color
 	w.color = self.theme.color
 	w.width = self.theme.width
 	vicious.register(w, vicious.widgets.net,
     	function(widget, args)
-			local img = nil
-			local txt = nil
-			if param == "up" then
-    	    	return nicetx(self,args, self.interface, param, 1)
-    	    elseif param == "down" then 
-				return nicetx(self, args, self.interface, param, 1)
-			else
-				print("Error: invalid param " .. param)
-				return
-			end
+			local unit, txt = nicetx(self, args, self.interface, direction, 0)
+			set_icon(self, direction, unit)	
+			return txt
 		end, self.refresh)
 	return w
 end
 
 local function create_tooltip(self, direction) 
-	print("self: " .. tostring(self))
+	--print("self: " .. tostring(self))
 	local tooltip = awful.tooltip({
 		obj = {k},
 		timer_function = function()
@@ -99,14 +92,20 @@ local function create_tooltip(self, direction)
 			if c == nil then
 				return "No data in cache"
 			end
+			local t, txt
 			str = ""
 			if direction == "up" then
-				str = "u: " .. nicetx(self, c.data, self.interface, "up", 3) .. "\n";
+				t, txt = nicetx(self, c.data, self.interface, "up", 3)
+				str = "u: " .. txt.. t .."\n";
 			else
-				str = "d: " .. nicetx(self, c.data, self.interface, "down", 3) .. "\n";
+				t, txt = nicetx(self, c.data, self.interface, "down", 3)
+				str = "d: " .. txt .. t .."\n";
 			end
-			str = str .. "rx: " .. nicetx(self, c.data, self.interface, "rx", 3) .. "\n";
-			str = str .. "tx: " .. nicetx(self, c.data, self.interface, "tx", 3)
+			local rx, tx
+			t, rx = nicetx(self, c.data, self.interface, "rx", 3)
+			str = str .. "rx: " .. rx .. " " .. t .."\n";
+			t, tx = nicetx(self, c.data, self.interface, "tx", 3)
+			str = str .. "tx: " .. tx .. " " .. t 
 			return str
 		end,
 	})
@@ -119,7 +118,7 @@ local function create_image(n)
 	return i
 end
 local function get_widgets(self)
-	print("self: " .. tostring(self))
+	--print("self: " .. tostring(self))
 	return { 
 		self.up, self.icon_up, 
 		self.down, self.icon_down, 
@@ -136,7 +135,7 @@ M.prototype = {
 	icon_up = nil,
 	icon_down = nil,
 	theme = {
-		width = 60,
+		width = 21,
 		background_color = "#FF00",
 		color = "#FFFFF",
 		images = {
@@ -158,20 +157,21 @@ M.new = function(interface, refresh)
 	setmetatable(self, M.mt)
 	self.interface = interface
 	self.refresh = refresh
-	self.tooltip = create_tooltip(self)
+	self.tooltip_up   = create_tooltip(self, "up")
+	self.tooltip_down = create_tooltip(self, "down")
 	local color = self.theme.background_color
 	-- up
 	self.theme.background_color = "#FF0000"
 	self.up = create_widget(self, "up")
-	self.tooltip:add_to_object(self.up)
+	self.tooltip_up:add_to_object(self.up)
 	self.icon_up = create_image(self.theme.images.up_b)
-	self.tooltip:add_to_object(self.icon_up)
+	self.tooltip_up:add_to_object(self.icon_up)
 	-- down
 	self.theme.background_color = "#00FF00"
 	self.down = create_widget(self, "down")
-	self.tooltip:add_to_object(self.down)
+	self.tooltip_down:add_to_object(self.down)
 	self.icon_down = create_image(self.theme.images.down_b)
-	self.tooltip:add_to_object(self.icon_down)
+	self.tooltip_down:add_to_object(self.icon_down)
 	self.widgets = function() return get_widgets(self) end
 	self.set_theme = function(t) self.theme = t end
 	return self
