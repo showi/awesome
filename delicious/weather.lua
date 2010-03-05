@@ -1,25 +1,21 @@
-local setmetatable = setmetatable
-local vicious = vicious
-local awful = awful
-local widget = widget
+vicious.enable_caching(vicious.widgets.weather)
 
-local string = string
-local print = print
-local image = image
-local os = os 
-local wibox = wibox 
-local trim = trim
-local file_exists = file_exists
+local img_dir = "weather/"
 
-module ("delicious.weather")
-local station = ""
-local refresh = 29
-local img_dir = awful.util.getdir("config") .. "/img/weather/"
-local w_weather = nil
-local t_weather = nil
-local registered = nil
-local icon_weather = widget({type = "imagebox", layout = awful.widget.layout.horizontal.rightleft})
+local M = {}
+M.mt = {}
+M.cache = {}
 
+M.prototype = {
+	station = "",
+	refresh = 29,
+	w_weather = nil,
+	t_weather = nil,
+	registered = nil,
+	theme = {
+		layout = awful.widget.layout.horizontal.rightleft
+	}
+}
 
 local function img_from_string(args) 
 	local icon = img_dir .. "na.png"
@@ -30,48 +26,38 @@ local function img_from_string(args)
 	if  not string or string == "N/A" then
 		string = args["{sky}"]
 	end
-	--string = " partly cloudy , zefez ; ezrez r"
    	string = string.match(string, "^%s*([%a%s]+)%s*([,;%a%s]*)$")
 	if string then
 		string = trim (string)
 		string = string.gsub(string, "%s", "_") .. ".png"
-		local iconpath = img_dir .. string
-		if file_exists(iconpath) then
-			icon = iconpath
-		end
+		icon = img_dir .. string
 	end
-	return image(icon)
+	print("weather: " .. icon)
+	return icon
 end
 
-local function register(station, refresh)
-	if registered then
-		vicious.unregister(vicious.weather, 0,registered)
-		registered = nil
+M.prototype.register = function(_s, station, refresh)
+	if _s.registered then
+		vicious.unregister(vicious.weather, 0,_s.registered)
+		_s.registered = nil
 	end
-	print('create widget')
-	w_weather = widget({ type = "textbox", layout = awful.widget.layout.horizontal.rightleft})
-	registered = vicious.register(w_weather, vicious.widgets.weather, 
+	_s.registered = vicious.register(_s.widgets.text, vicious.widgets.weather, 
     	function(widget, args)
-	        print("refresh ");
-			local c = vicious.get_cache(vicious.widgets.weather) -- get_cache is not in vicious 
-			if c then
-				if c.data["{tempc}"] ~= "N/A" then
-					if not args or args["{tempc}"] == "N/A" then
-						return
-					end 
-				end
-			end	
-    	    icon_weather.image = img_from_string(args)
-    	    if string.match(args["{tempc}"], "%d+") then
+			_s.widgets.icon.image = M.cache.get_image(img_from_string(args))
+			if string.match(args["{tempc}"], "^[%d-]+$") then
 				return string.format("%2i°C", args["{tempc}"])
 			else
-				return "N/A"
+				return "n/a"
 			end
 		end, refresh, station)
 end
 
-local function create_tooltip() 
-	t_weather = awful.tooltip({
+M.set_image_cache = function(cache)
+	M.cache = cache
+end
+
+M.prototype.create_tooltip = function(_s) 
+	local tooltip = awful.tooltip({
 	    obj = {k},
 	    timer_function = function()
 	        local c = vicious.get_cache(vicious.widgets.weather) -- get_cache is not in vicious 
@@ -91,29 +77,30 @@ local function create_tooltip()
     	end,
 	})
 	-- register tooltip within weather widget
-	t_weather:add_to_object(w_weather)
-	t_weather:add_to_object(icon_weather)
+	tooltip:add_to_object(_s.widgets.icon)
+	tooltip:add_to_object(_s.widgets.text)
 
 end
 
--- Creating widget
-local function create_widget (station, refresh)
--- Enable caching
-	vicious.enable_caching(vicious.widgets.weather)
---	register(station, refresh)
+M.prototype.get_widgets = function(_s)
+	return _s.widgets
 end
 
-function display(_station, _refresh)
-	if not vicious or not vicious.widgets.weather then
-		print("You need vicious library and vicious.weather enable in vicious/init.lua")
-		return
-	end
-	if not w_weather then
-		create_widget(_station , _refresh)
-		register(_station, _refresh)
-		create_tooltip()
-	end
-	return {w_weather, icon_weather, layout = awful.widget.layout.horizontal.rightleft}
+M.mt.__index = function(t, k)
+	return M.prototype[k]
 end
 
--- setmetatable(_M, { __call = function(_, ...) return display(...) end })
+M.new = function(station, refresh)
+	local self = {}
+	setmetatable(self, M.mt)
+	self.widgets = {
+		icon = widget({type = "imagebox"}),
+		text = widget({type = "textbox", width = 15}),
+		layout = self.theme.layout
+	}
+	self.register(self, station, refresh)
+	self.create_tooltip(self)
+	return self
+end
+
+return M
