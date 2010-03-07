@@ -57,6 +57,7 @@ function M:add_listener(event, _object)
 		self.events[event][_object] =  _object
 	end
 end
+
 function M:emit(event, id)
 	self:debug("emit " .. event .. " ["..id .."]")
 	if not self.events then 

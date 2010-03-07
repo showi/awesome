@@ -37,32 +37,34 @@ function M:notify(id, ntype)
 		end	
 	end
 end
+
+
 function M:add(wtype, args)
 	local id = wtype .. ":".. args_to_id(args)
 	local worker = self:get(id)
 	if worker then return id end
 	worker = self:set({
 		id = id,
-		cpu = args.cpu,
 		refresh = args.refresh,
 		wtype = wtype,
 	})
-	if wtype == "cpufreq" then 
+	if wtype == "cpufreq" then
+		print("cpufreq: register vicious cpu: " .. args.cpu) 
 		worker.register = vicious.register(self.widget, vicious.widgets.cpufreq,
 			function(w, args)
 				worker.args = args
 				worker:emit('update', id)
-			end, worker.refresh, worker.args.cpu)
+			end, args.refresh, args.cpu)
 	elseif wtype == "net" then 
 		worker.register = vicious.register(self.widget, vicious.widgets.net,
 			function(w, args)
 				worker.args = args
 				worker:emit('update', id)
-			end, worker.refresh, worker.cpu)
+			end, worker.refresh, worker.nif)
 	elseif wtype == "weather" then 
 		worker.register = vicious.register(self.widget, vicious.widgets.weather,
-			function(w, largs)
-				worker.args = largs
+			function(w, args)
+				worker.args = args
 				worker:emit('update', id)
 			end, args.refresh, args.station)
 	end
@@ -79,7 +81,7 @@ function M:set(args)
 	end
 	local Cworker = require("delicious.workers.one")
 	if not self.workers[args.id] then
-			print("bnuhhhh" .. args.id)	
+			print("New " .. args.wtype .. " with " .. args.id)	
 	end
 	self.workers[args.id] = Cworker(self, args)
 	return self.workers[args.id]
