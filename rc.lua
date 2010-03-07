@@ -9,7 +9,7 @@ require("naughty")
 -- Widget library
 require("vicious")
 
-require("delicious")
+--require("delicious")
 
 local udata = {
 	weather = {
@@ -99,26 +99,42 @@ separator.text  = " | "
 --- }}}
 
 -- {{{ Widgets
-require("mywidgets/textclock")
-require("mywidgets/mem")
-require("mywidgets/cpu")
+--require("mywidgets/textclock")
+--require("mywidgets/mem")
+--require("mywidgets/cpu")
 --require("mywidgets/cpufreq")
 --require("mywidgets/weather")
-require("mywidgets/network")
+--require("mywidgets/network")
 
--- require("delicious")
+--require("delicious")
 
 --w_test = widget({ type = "textbox" })
 --w_test.text = delicious.weather.display()
 
+-- [[ Loading delicious ]] --
+--local delicious = require("delicious")
+---- [[ Creating delicious widgets ]] --
+--local w_network = delicious.net.new("eth1", 5)
+--local w_cpufreq = delicious.cpufreq.new("cpu0", {600, 800, 1000, 1200, 1400}, 5)
+--local w_weather = delicious.weather.new(udata.weather.station, 500)
+--
+---- [[ Creating animation ]] --
+--local animation = require("delicious.fx.animation")
+--animation.set_image_cache(delicious.get_image_cache()) -- not usable without cache
+--
+--local anim = animation.fromdir( 
+--	"animation/game/smwqblock/", "smwqblock", 3, 1)
+--local w_anim = widget({type = "imagebox"})
+--w_anim.resize = true
+--local c_anim = anim.get_controller(w_anim, anim)
+--w_anim:add_signal('mouse::enter',  function () c_anim.set_speed(c_anim, 0.2) end)
+--w_anim:add_signal('mouse::leave',  function () c_anim.set_speed(c_anim, 1) end)
+--w_anim.mouse_leave = function () c_anim.set_speed(c_anim, 1) end
+--c_anim.set_speed(c_anim, 1)
+--c_anim.start(c_anim)
 
 -- Create a systray
 mysystray = widget({ type = "systray" })
-
-deli = {}
-deli.net = require("delicious.network")
-net_eth0 = deli.net.new("eth1", 5)
-
 -- Create a wibox for each screen and add it
 mywibox = {}
 mypromptbox = {}
@@ -185,20 +201,10 @@ for s = 1, screen.count() do
             mylauncher,
             mytaglist[s],
             mypromptbox[s],
-            layout = awful.widget.layout.horizontal.leftright
-        },
+            layout = awful.widget.layout.horizontal.leftright,
+        	width = 100
+		},
         mylayoutbox[s], separator,
-        w_textclock, separator, w_test,
-		--w_network_down, icon_network_down, 
-		--w_network_up, icon_network_up, separator,
-		net_eth0.widgets(), separator,
-		-- w_weather, icon_weather, separator,
-		--delicious.weather.display("LSGC", 29), separator, -- ch 
-		delicious.weather.display(udata.weather.station, udata.weather.refresh), separator, -- paris le bourget 
-		--delicious.weather.display("LFPO", 5), separator, -- paris le bourget 
-		w_mem, separator,
-		w_cpu, separator,
-		delicious.cpufreq.display("cpu0"), separator,
         s == 1 and mysystray or nil,
         mytasklist[s],
         layout = awful.widget.layout.horizontal.rightleft
@@ -368,7 +374,7 @@ awful.rules.rules = {
 -- Signal function to execute when a new client appears.
 client.add_signal("manage", function (c, startup)
     -- Add a titlebar
-    -- awful.titlebar.add(c, { modkey = modkey })
+     awful.titlebar.add(c, { modkey = modkey })
 
     -- Enable sloppy focus
     c:add_signal("mouse::enter", function(c)
