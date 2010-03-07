@@ -1,5 +1,9 @@
 local cbase = require("delicious.widget.base")
 
+local CDATA = {
+	parent = nil
+}
+
 local function minmax(_l)
     local min, max = nil, nil
     for k, v in pairs(_l) do

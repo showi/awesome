@@ -54,7 +54,7 @@ function M:add_listener(event, _object)
 	end
 	if not self.events[event][tostring(_object)] then
 		self:debug("Add listener('" .. event .. "'): " .. tostring(_object))
-		self.events[event][_object] =  { o = _object}
+		self.events[event][_object] =  _object
 	end
 end
 function M:emit(event, id)
@@ -68,13 +68,12 @@ function M:emit(event, id)
 		return 
 	end
 	for t, v in pairs(self.events[event]) do
-		--print("t, v: " .. tostring(t) .. ", " .. tostring(v))
 		if event == "update" then
 			self:debug("Update event")
-		if v.o and v.o.onupdate then 
-			v.o:onupdate()
+			if v and v.onupdate then 
+				v:onupdate()
+			end
 		end
-	end
 	end
 end
 
