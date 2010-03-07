@@ -9,11 +9,9 @@ require("naughty")
 -- Widget library
 require("vicious")
 
---require("delicious")
-
 local udata = {
 	weather = {
-		station = "LFPO",
+		station = "LSGC",
 		refresh = 29
 	},
 	cpufreq = {
@@ -23,6 +21,7 @@ local udata = {
 -- {{{ Variable definitions
 -- Themes define colours, icons, and wallpapers
 beautiful.init("/usr/local/share/awesome/themes/zenburn/theme.lua")
+
 -- This is used later as the default terminal and editor to run.
 terminal = "roxterm"
 editor = os.getenv("EDITOR") or "nano"
@@ -102,36 +101,31 @@ separator.text  = " | "
 --require("mywidgets/textclock")
 --require("mywidgets/mem")
 --require("mywidgets/cpu")
---require("mywidgets/cpufreq")
---require("mywidgets/weather")
---require("mywidgets/network")
 
---require("delicious")
+w_image = widget({type = "imagebox"})
 
---w_test = widget({ type = "textbox" })
---w_test.text = delicious.weather.display()
+-- DELICIOUS ---
+-- start [[ 
+local delicious = require("delicious")()
+-- preloading widget module into delicious namespace
+delicious:load_modules('widget', {'cpufreq', 'net' }) 
+-- create cpu frequency widget, the first argument is here so we can set module parent
+local w_cpufreq = delicious.widget.cpufreq (delicious, {
+	cpu = "cpu0", 
+	freqs = { 600, 800, 1000, 1200, 1400}, 
+	refresh = 3,
+	tooltip = true,
+})
 
--- [[ Loading delicious ]] --
---local delicious = require("delicious")
----- [[ Creating delicious widgets ]] --
---local w_network = delicious.net.new("eth1", 5)
---local w_cpufreq = delicious.cpufreq.new("cpu0", {600, 800, 1000, 1200, 1400}, 5)
---local w_weather = delicious.weather.new(udata.weather.station, 500)
---
----- [[ Creating animation ]] --
---local animation = require("delicious.fx.animation")
---animation.set_image_cache(delicious.get_image_cache()) -- not usable without cache
---
---local anim = animation.fromdir( 
---	"animation/game/smwqblock/", "smwqblock", 3, 1)
---local w_anim = widget({type = "imagebox"})
---w_anim.resize = true
---local c_anim = anim.get_controller(w_anim, anim)
---w_anim:add_signal('mouse::enter',  function () c_anim.set_speed(c_anim, 0.2) end)
---w_anim:add_signal('mouse::leave',  function () c_anim.set_speed(c_anim, 1) end)
---w_anim.mouse_leave = function () c_anim.set_speed(c_anim, 1) end
---c_anim.set_speed(c_anim, 1)
---c_anim.start(c_anim)
+local w_net = delicious.widget.net (delicious, {
+	nif  = "eth1",
+	refresh = 1
+})
+
+-- We now can use wiget:get_widgets() to place our cpu widget into wibox
+
+-- ]] end
+
 
 -- Create a systray
 mysystray = widget({ type = "systray" })
@@ -205,7 +199,10 @@ for s = 1, screen.count() do
         	width = 100
 		},
         mylayoutbox[s], separator,
-        s == 1 and mysystray or nil,
+		w_net:get_widgets(), separator,
+			--w_cpufreq:get_widgets(), separator, -- We are using our delicious widget here
+        
+	s == 1 and mysystray or nil,
         mytasklist[s],
         layout = awful.widget.layout.horizontal.rightleft
     }
