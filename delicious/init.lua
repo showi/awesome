@@ -1,38 +1,70 @@
-print("init")
--- Grab env
-require("myfunc")
+require('delicious.class')
+local cbase = require("delicious.base")
 
-function trim(str)
-	str = string.match(str, "^%s*(.*)$")
-	str = string.match(str, "^(.*)%s*$")
-	return str
+local M = delicious_class(cbase, function(s, args)
+	s:_base_init()
+	-- module init --
+	s:set_module_name("delicious")
+	s:debug("New module [" .. s:get_module_name() .. "]")
+	s.parent = nil
+	local CImageCache = require("delicious.util.image_cache")
+	s.ImageCache = CImageCache(s)
+	local CWorkers = require("delicious.workers")
+	s.Workers = CWorkers(s) 
+	s.widget = {}
+	s.modules = {}
+	s:debug('Image cache: ' .. tostring(s.ImageCache))
+end)
+
+-- overide base class
+function M:set_parent()
+	set_parent = nil
+	self:warn("Error: cannot set parent for delicious (set to nil)")
+	return
 end
--- Check that vicious is loaded
-if not vicious then
-    print("WARNING: You need vicious library to use delicious")
+
+-- overide base class
+function M:set_module_name()
 end
--- Setting image cache
-local image_cache = require("delicious.util.image_cache")
--- Create module date
-local M = {}
-M.mt = {}
-M.prototype = {}
--- Magic properties
-M.mt.__index = function(t, k)
-	return M.prototype[k]
+function M:get_module_name()
+	return "delicious"
 end
+
 -- Function to retrieve images cache
-M.prototype.get_image_cache = function() 
-	return image_cache
+function M:get_image_cache()
+	return self.ImageCache
 end
--- Loading modules
-M.net     = require("delicious.network")
-M.net.set_image_cache(image_cache)
-M.cpufreq = require("delicious.cpufreq")
-M.cpufreq.set_image_cache(image_cache)
-M.weather = require("delicious.weather")
-M.weather.set_image_cache(image_cache)
--- Set metatable to auto prototype accessing
-setmetatable(M, M.mt)
+
+function M:get_worker_id(id)
+	return self.Workers:get(id)
+end
+
+function M:set_id_worker(id)
+	self.id_worker = id
+end
+
+function M:get_id_worker(id)
+	return self.id_worker
+end
+
+function M:list_modules()
+	print("Listing loaded module(s)")
+	for t, v in pairs(self.widget) do
+		print(" - " .. v:get_module_name())
+	end
+end
+
+function M:load_modules(mtype, modules)
+	for k, v in pairs(modules) do
+		local mname = "delicious.widget." .. v
+		if self.modules[v] then
+			self:warn("Module '"..mname.."' already loaded")
+		end
+		self:debug("Loading module: " .. mname)
+		if mtype == "widget" then
+			self.widget[v] = require(mname)
+		end
+	end	
+end
 
 return M
