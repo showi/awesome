@@ -94,7 +94,7 @@ mylauncher = awful.widget.launcher({ image = image(beautiful.awesome_icon),
 
 --- {{{ Separator
 separator = widget({ type = "textbox" })
-separator.text  = " | "
+separator.text  = "|"
 --- }}}
 
 -- {{{ Widgets
@@ -105,29 +105,27 @@ separator.text  = " | "
 w_image = widget({type = "imagebox"})
 
 -- DELICIOUS ---
--- start [[ 
-local delicious = require("delicious")()
+require("delicious") -- import global variable delicious
 -- preloading widget module into delicious namespace
 delicious:load_modules('widget', {'cpufreq', 'net', 'weather'}) 
--- create cpu frequency widget, the first argument is here so we can set module parent
 -- Widget cpufreq
-local w_cpufreq = delicious.widget.cpufreq (delicious, {
+local w_cpufreq = delicious.widget.cpufreq ({
 	cpu = "cpu0", 
 	freqs = { 600, 800, 1000, 1200, 1400}, 
 	refresh = 3,
 	tooltip = true,
 })
 -- Widget net 
-local w_net = delicious.widget.net (delicious, {
+local w_net = delicious.widget.net ({
 	nif  = "eth0",
 	refresh = 3
 })
-local w_net1 = delicious.widget.net (delicious, {
+local w_net1 = delicious.widget.net ({
 	nif  = "eth1",
 	refresh = 3
 })
 -- Widget weather
-local w_weather = delicious.widget.weather(delicious, {
+local w_weather = delicious.widget.weather({
 	station = "LGPO",
 	refresh = 15,
 })

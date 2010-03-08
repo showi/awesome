@@ -1,13 +1,4 @@
-local cbase = require("delicious.base")
-
-local CDATA = {
-	parent = nil,
-	_module = {
-		name = "delicious.workers.one"
-	}
-}
-
-local M = delicious_class(cbase, function(s, ...)
+local M = delicious_class(delicious:get_class('delicious.base'), function(s, ...)
 	s:_base_init()
 	s:set_module_name("delicious.workers.one")
 	s:debug("New module [" .. s:get_module_name() .. "]")

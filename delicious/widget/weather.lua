@@ -3,9 +3,9 @@ local cbase = require("delicious.widget.base")
 local M = delicious_class(cbase, function(s, ...)
 	s:_base_init()
 	s:set_module_name("delicious.widget.weather")
-	s:set_parent(arg[1])
-	s.station = arg[2].station
-	s.refresh = arg[2].refresh
+	s:set_parent(delicious)
+	s.station = arg[1].station
+	s.refresh = arg[1].refresh
 	s.widgets = {
 		label = widget({type = "textbox"}),
 		text_down = widget({type = "textbox" }),
@@ -21,7 +21,7 @@ local M = delicious_class(cbase, function(s, ...)
         images = { 
         },  
 	}
-	s:set_id_worker(s.parent.Workers:add('weather', arg[2]))
+	s:set_id_worker(s.parent.Workers:add('weather', arg[1]))
 	local w = s:get_parent().Workers:get(s:get_id_worker())
 	w:add_listener('update', s)
 end)

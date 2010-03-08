@@ -6,7 +6,11 @@ function M:log(msg)
 end
 
 function M:debug(msg)
-	--self:log("[DEBUG] " .. msg)
+	if (delicious and not delicious.DEBUG) or not self.DEBUG then 
+		return
+	end
+	local m = string.format("%10s", "[DEBUG][ " ..self:get_module_name() .. " ] " .. msg)
+	self:log(m)
 end
 
 function M:warn(msg)
@@ -15,6 +19,7 @@ end
 
 function M:_base_init()
 	self._module = {}
+	self.DEBUG = true
 end
 
 function M:set_module_name(n)

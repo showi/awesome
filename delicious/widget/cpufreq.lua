@@ -1,4 +1,4 @@
-local cbase = require("delicious.widget.base")
+--local cbase = require("delicious.widget.base")
 
 local CDATA = {
 	parent = nil
@@ -21,24 +21,24 @@ local function minmax(_l)
     return min, max
 end
 
-local M = delicious_class(cbase, function(s, ...)
+local M = delicious_class(delicious:get_class('delicious.widget.base'), function(s, ...)
 	s:_base_init()
 	s:set_module_name("delicious.widget.cpufreq")
-	s:set_parent(arg[1])
+	s:set_parent(delicious)
 	s.id_worker = nil
 	s.image_path = "delicious/widget/cpufreq/"
 	s.events = {}
-	s.id    = arg[2].id
-	s.wtype = arg[2].id
-    s.cpu   = arg[2].cpu
-	s.freqs = arg[2].freqs
-	s.refresh = arg[2].refresh
+	s.id    = arg[1].id
+	s.wtype = arg[1].id
+    s.cpu   = arg[1].cpu
+	s.freqs = arg[1].freqs
+	s.refresh = arg[1].refresh
 	s.args = arg
-	s:debug("cpu: " .. arg[2].cpu)
-	s:debug("freq: " .. tostring(arg[2].freqs))
-	s:debug("refresh: " .. tostring(arg[2].refresh))
+	s:debug("cpu: " .. arg[1].cpu)
+	s:debug("freq: " .. tostring(arg[1].freqs))
+	s:debug("refresh: " .. tostring(arg[1].refresh))
 	s:debug("Image cache: " .. tostring(s.parent:get_image_cache()))
-	local min, max = minmax(arg[2].freqs)
+	local min, max = minmax(arg[1].freqs)
     local step = math.floor((max - min) / 4)
     s.step = step
     s.min = min
@@ -49,7 +49,7 @@ local M = delicious_class(cbase, function(s, ...)
 	for i= 2,3 do
         s.fstep[i] = min + ((i-1) * step)
     end
-	s:set_id_worker(s.parent.Workers:add('cpufreq', arg[2]))
+	s:set_id_worker(s.parent.Workers:add('cpufreq', arg[1]))
 	s:debug("Id worker: " .. s:get_id_worker())
 	local w = s:get_parent().Workers:get(s:get_id_worker())
 

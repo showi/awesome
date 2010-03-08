@@ -3,9 +3,9 @@ local cbase = require("delicious.widget.base")
 local M = delicious_class(cbase, function(s, ...)
 	s:_base_init()
 	s:set_module_name("delicious.widget.net")
-	s:set_parent(arg[1])
-	s.nif = arg[2].nif
-	s.refresh = arg[2].refresh
+	s:set_parent(delicious)
+	s.nif = arg[1].nif
+	s.refresh = arg[1].refresh
 	s.widgets = {
 		label = widget({type = "textbox"}),
 		text_down = widget({type = "textbox" }),
@@ -48,7 +48,7 @@ local M = delicious_class(cbase, function(s, ...)
 		= s.parent.ImageCache:get_image(s.image_path .. s.theme.images.down_kb)
 	s.widgets.text_up.text = "n/a"
 	s.widgets.text_down.text = "n/a"
-	s:set_id_worker(s.parent.Workers:add('net', arg[2]))
+	s:set_id_worker(s.parent.Workers:add('net', arg[1]))
 	local w = s:get_parent().Workers:get(s:get_id_worker())
 	w:add_listener('update', s)
 end)
@@ -81,13 +81,13 @@ function M:nicetx(args, interface, tx, p)
         return "b", "n/a"
     end
     if v >= giga then
-        return "gb", string.format("% 3."..p.."f", v / giga)
+        return "gb", string.format("%0."..p.."f", v / giga)
     elseif v >= mega then
-        return "mb", string.format("% 3."..p.."f", v / mega)
+        return "mb", string.format("%0."..p.."f", v / mega)
     elseif v >= kilo then
-        return "kb", string.format("% 3."..p.."f", v / kilo)
+        return "kb", string.format("%0."..p.."f", v / kilo)
     else
-        return "b", string.format("% 3."..p.."f", v)
+        return "b", string.format("%0."..p.."f", v)
     end
 end
 
@@ -102,13 +102,13 @@ function M:onupdate()
 		local u, v = self:nicetx(c.args, self.nif, 'up', 0)
 		self.widgets.icon_up.image = 
 			self:get_parent().ImageCache:get_image(self.image_path .. "up_" .. u .. ".png")
-		self.widgets.text_up.text = v or 'n/a'
+		self.widgets.text_up.text = v --or 'n/a'
 	end
 	do 
 		local u, v = self:nicetx(c.args, self.nif, 'down', 0)
 		self.widgets.icon_down.image = 
 			self:get_parent().ImageCache:get_image(self.image_path .. "down_" .. u .. ".png")
-		self.widgets.text_down.text = v or 'n/a'
+		self.widgets.text_down.text = v --or 'n/a'
 	end
 end
 return M
