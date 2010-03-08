@@ -6,7 +6,7 @@ function M:log(msg)
 end
 
 function M:debug(msg)
-	self:log("[DEBUG] " .. msg)
+	--self:log("[DEBUG] " .. msg)
 end
 
 function M:warn(msg)

@@ -57,6 +57,7 @@ local M = delicious_class(cbase, function(s, ...)
 		icon = widget({type = "imagebox"}),
 		layout = awful.widget.layout.horizontal.rightleft
 	}
+	s.widgets.icon.bg = beautiful.bg_focus
 	s.widgets.icon.image = s.parent.ImageCache:get_image(s.image_path .. "na.png")
 	w:add_listener('update', s)
 	s:debug("Add listener: " .. tostring(s))

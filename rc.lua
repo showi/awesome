@@ -108,20 +108,29 @@ w_image = widget({type = "imagebox"})
 -- start [[ 
 local delicious = require("delicious")()
 -- preloading widget module into delicious namespace
-delicious:load_modules('widget', {'cpufreq', 'net' }) 
+delicious:load_modules('widget', {'cpufreq', 'net', 'weather'}) 
 -- create cpu frequency widget, the first argument is here so we can set module parent
+-- Widget cpufreq
 local w_cpufreq = delicious.widget.cpufreq (delicious, {
 	cpu = "cpu0", 
 	freqs = { 600, 800, 1000, 1200, 1400}, 
 	refresh = 3,
 	tooltip = true,
 })
-
+-- Widget net 
 local w_net = delicious.widget.net (delicious, {
-	nif  = "eth1",
-	refresh = 1
+	nif  = "eth0",
+	refresh = 3
 })
-
+local w_net1 = delicious.widget.net (delicious, {
+	nif  = "eth1",
+	refresh = 3
+})
+-- Widget weather
+local w_weather = delicious.widget.weather(delicious, {
+	station = "LGPO",
+	refresh = 15,
+})
 -- We now can use wiget:get_widgets() to place our cpu widget into wibox
 
 -- ]] end
@@ -199,8 +208,9 @@ for s = 1, screen.count() do
         	width = 100
 		},
         mylayoutbox[s], separator,
+		w_cpufreq:get_widgets(), separator, 
+		w_net1:get_widgets(), separator,
 		w_net:get_widgets(), separator,
-			--w_cpufreq:get_widgets(), separator, -- We are using our delicious widget here
         
 	s == 1 and mysystray or nil,
         mytasklist[s],

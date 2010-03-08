@@ -22,4 +22,6 @@ end
 function M:get_widgets()
 	return self.widgets
 end
+
+function M:
 return M
