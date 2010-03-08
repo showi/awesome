@@ -107,7 +107,7 @@ w_image = widget({type = "imagebox"})
 -- DELICIOUS ---
 require("delicious") -- import global variable delicious
 -- preloading widget module into delicious namespace
-delicious:load_modules('widget', {'cpufreq', 'net', 'weather'}) 
+--delicious:load_modules('widget', {'cpufreq', 'net', 'weather'}) 
 -- Widget cpufreq
 local w_cpufreq = delicious.widget.cpufreq ({
 	cpu = "cpu0", 

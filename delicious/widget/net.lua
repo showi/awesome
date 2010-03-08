@@ -1,6 +1,4 @@
-local cbase = require("delicious.widget.base")
-
-local M = delicious_class(cbase, function(s, ...)
+local M = delicious_class(delicious:get_class("delicious.widget.base"), function(s, ...)
 	s:_base_init()
 	s:set_module_name("delicious.widget.net")
 	s:set_parent(delicious)

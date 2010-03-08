@@ -1,12 +1,20 @@
 local M = delicious_class(function(s, args)
 end)
 
+function M:set_debug(b)
+	self.DEBUG = b	
+end
+
+function M:get_debug()
+	return self.DEBUG
+end
+
 function M:log(msg)
 	print(msg)
 end
 
 function M:debug(msg)
-	if (delicious and not delicious.DEBUG) or not self.DEBUG then 
+	if (delicious and not delicious.DEBUG) or not self:get_debug() then 
 		return
 	end
 	local m = string.format("%10s", "[DEBUG][ " ..self:get_module_name() .. " ] " .. msg)
@@ -19,7 +27,7 @@ end
 
 function M:_base_init()
 	self._module = {}
-	self.DEBUG = true
+	self.DEBUG = false 
 end
 
 function M:set_module_name(n)

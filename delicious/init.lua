@@ -1,15 +1,26 @@
+--[[ DELICIOUS
+	There's only two global variable exported by this module
+	- delicious namespace to access all delicious functionality
+	- delicious_class function for creating new delicious class
+--]]
 require('delicious.class')
 local cbase = require("delicious.base")
 
 local M = delicious_class(cbase, function(s, args)
-	s.class = {}
+	s.class = {} -- we store class to reuse it later
 	s.class['delicious.base'] = cbase
-	s:_base_init()
-	s.DEBUG = true
-	s.widget = {}
-	-- module init --
+	s.class['delicious.class'] = class 
+	s:_base_init() -- Thing that all delicious module share
 	s:set_module_name("delicious")
-	s:debug("New module [" .. s:get_module_name() .. "]")
+	s:set_debug(true) -- turn on/off debugging
+	s.widget = {	
+		mt = {
+			__index = function(t, k) 
+				return s:get_class("delicious.widget." .. k)
+			end
+		}
+	}
+	setmetatable(s.widget, s.widget.mt) 
 	s.parent = nil
 	s:debug('Image cache: ' .. tostring(s.ImageCache))
 end)
@@ -57,23 +68,6 @@ end
 
 function M:get_id_worker(id)
 	return self.id_worker
-end
-
-function M:list_modules()
-	print("Listing loaded module(s)")
-	for t, v in pairs(self.class) do
-		print(" - " .. v:get_module_name())
-	end
-end
-
-function M:load_modules(mtype, modules)
-	for k, v in pairs(modules) do
-		local mname = "delicious.widget." .. v
-		--self:debug("Loading module "..mtype..": " .. mname)
-		if mtype == "widget" then
-			self.widget[v] = self:get_class(mname)
-		end
-	end	
 end
 
 delicious = M()
