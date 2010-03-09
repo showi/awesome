@@ -1,6 +1,5 @@
 local M = delicious_class(delicious:get_class("delicious.widget.base"), function(s, ...)
-	s:_base_init()
-	s:set_module_name("delicious.widget.weather")
+	s:_base_init("delicious.widget.weather")
 	s:set_parent(delicious)
 	s.station = arg[1].station
 	s.refresh = arg[1].refresh

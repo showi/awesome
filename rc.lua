@@ -117,7 +117,7 @@ local w_cpufreq = delicious.widget.cpufreq ({
 })
 -- Widget net 
 local w_net = delicious.widget.net ({
-	nif  = "eth0",
+	nif  = "lo",
 	refresh = 3
 })
 local w_net1 = delicious.widget.net ({
@@ -125,10 +125,10 @@ local w_net1 = delicious.widget.net ({
 	refresh = 3
 })
 -- Widget weather
-local w_weather = delicious.widget.weather({
-	station = "LGPO",
-	refresh = 15,
-})
+--local w_weather = delicious.widget.weather({
+--	station = "LGPO",
+--	refresh = 15,
+--})
 -- We now can use wiget:get_widgets() to place our cpu widget into wibox
 
 -- ]] end

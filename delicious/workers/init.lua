@@ -1,5 +1,5 @@
 local M = delicious_class(delicious:get_class('delicious.base'), function(s, ...)
-	s:_base_init() 
+	s:_base_init("delicious.workers") 
 	s:set_module_name("delicious.workers")
 	s:set_parent(arg[1])
 	s.workers = {}
@@ -35,7 +35,7 @@ end
 
 
 function M:add(wtype, args)
-	local id = wtype .. ":".. args_to_id(args)
+	local id = wtype --.. ":".. args_to_id(args)
 	local worker = self:get(id)
 	if worker then return id end
 	worker = self:set({

@@ -16,8 +16,7 @@ local function minmax(_l)
 end
 
 local M = delicious_class(delicious:get_class('delicious.widget.base'), function(s, ...)
-	s:_base_init()
-	s:set_module_name("delicious.widget.cpufreq")
+	s:_base_init("delicious.widget.cpufreq")
 	s:set_parent(delicious)
 	s.id_worker = nil
 	s.image_path = "delicious/widget/cpufreq/"

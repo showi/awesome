@@ -1,6 +1,5 @@
 local M = delicious_class(delicious:get_class('delicious.base'), function(s, args)
-	s:_base_init()
-	s:set_module_name("delicious.util.image_cache")
+	s:_base_init("delicious.util.image_cache")
 	s.cache = {}
 	s.image_path = awful.util.getdir("config") .. "/img/"
 	s.badimg = widget({type = "imagebox"})

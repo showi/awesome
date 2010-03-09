@@ -10,8 +10,7 @@ local M = delicious_class(cbase, function(s, args)
 	s.class = {} -- we store class to reuse it later
 	s.class['delicious.base'] = cbase
 	s.class['delicious.class'] = class 
-	s:_base_init() -- Thing that all delicious module share
-	s:set_module_name("delicious")
+	s:_base_init("delicious") -- Thing that all delicious module share
 	s:set_debug(true) -- turn on/off debugging
 	s.widget = {	
 		mt = {

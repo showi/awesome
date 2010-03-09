@@ -1,6 +1,5 @@
 local M = delicious_class(delicious:get_class('delicious.base'), function(s, ...)
-	s:_base_init()
-	s:set_module_name("delicious.workers.one")
+	s:_base_init("delicious.workers.one")
 	s:debug("New module [" .. s:get_module_name() .. "]")
 	s.parent = arg[1]
 	s.id = arg[2].id

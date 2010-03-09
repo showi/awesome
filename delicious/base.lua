@@ -25,8 +25,10 @@ function M:warn(msg)
 	self:log("[WARN] " .. msg)
 end
 
-function M:_base_init()
-	self._module = {}
+function M:_base_init(name)
+	self._module = {
+		name = name
+	}
 	self.DEBUG = false 
 end
 
