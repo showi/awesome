@@ -11,7 +11,7 @@ local M = delicious_class(cbase, function(s, args)
 	s.class['delicious.base'] = cbase
 	s.class['delicious.class'] = class 
 	s:_base_init("delicious") -- Thing that all delicious module share
-	s:set_debug(true) -- turn on/off debugging
+	s:set_debug(false) -- turn on/off debugging
 	s.widget = {	
 		mt = {
 			__index = function(t, k) 
@@ -52,7 +52,6 @@ function M:get_class(n)
 	return self.class[n]
 end
 
--- Function to retrieve images cache
 function M:get_image_cache()
 	return self.ImageCache
 end
@@ -71,4 +70,3 @@ end
 
 delicious = M()
 delicious:_init()
---return M

@@ -106,33 +106,27 @@ w_image = widget({type = "imagebox"})
 
 -- DELICIOUS ---
 require("delicious") -- import global variable delicious
--- preloading widget module into delicious namespace
---delicious:load_modules('widget', {'cpufreq', 'net', 'weather'}) 
--- Widget cpufreq
+-- CPUFREQ widget ---
 local w_cpufreq = delicious.widget.cpufreq ({
-	cpu = "cpu0", 
-	freqs = { 600, 800, 1000, 1200, 1400}, 
+	cpu = 0, 
 	refresh = 3,
-	tooltip = true,
 })
--- Widget net 
-local w_net = delicious.widget.net ({
-	nif  = "lo",
-	refresh = 3
+--- NET WIDGET ---
+local w_net0 = delicious.widget.net ({
+	refresh = 2,
+	nif = "lo"
 })
+function w_net0:get_widgets() -- subclassing our widget method get_widgets()
+	return { layout = awful.widget.layout.horizontal.rightleft,
+			{ self.widgets.icon_up,
+			  layout = awful.widget.layout.horizontal.rightleft, },
+			{ self.widgets.icon_down,
+			  layout = awful.widget.layout.horizontal.rightleft, },}
+end
 local w_net1 = delicious.widget.net ({
-	nif  = "eth1",
-	refresh = 3
+	refresh = 5,
+	nif = "eth1"
 })
--- Widget weather
---local w_weather = delicious.widget.weather({
---	station = "LGPO",
---	refresh = 15,
---})
--- We now can use wiget:get_widgets() to place our cpu widget into wibox
-
--- ]] end
-
 
 -- Create a systray
 mysystray = widget({ type = "systray" })
@@ -207,8 +201,9 @@ for s = 1, screen.count() do
 		},
         mylayoutbox[s], separator,
 		w_cpufreq:get_widgets(), separator, 
+		w_net0:get_widgets(), separator,
 		w_net1:get_widgets(), separator,
-		w_net:get_widgets(), separator,
+		--w_net:get_widgets(), separator,
         
 	s == 1 and mysystray or nil,
         mytasklist[s],

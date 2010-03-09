@@ -46,6 +46,7 @@ local M = delicious_class(delicious:get_class("delicious.widget.base"), function
 	s.widgets.text_up.text = "n/a"
 	s.widgets.text_down.text = "n/a"
 	s:set_id_worker(s.parent.Workers:add('net', arg[1]))
+	--print ("id worker: " .. s:get_id_worker())
 	local w = s:get_parent().Workers:get(s:get_id_worker())
 	w:add_listener('update', s)
 end)
@@ -68,12 +69,18 @@ end
 local kilo = 1000
 local mega = kilo * 1000
 local giga = mega * 1000
-function M:nicetx(args, interface, tx, p)
+function M:nicetx(data, interface, tx, p)
     if not p then -- p stand for precision 
         p = 1
     end
-    local k = interface .. " " .. tx .. "_b"
-    local v = tonumber(args["{"..k.."}"])
+    --local k = interface .. " " .. tx .. "_b"
+    --local v = tonumber(args["{"..k.."}"])
+	local v = nil
+	if tx == "up" then
+		v = data[interface].up
+	else 
+		v = data[interface].down
+	end
     if not v then
         return "b", "n/a"
     end
@@ -96,13 +103,13 @@ function M:onupdate()
 	end
 	local c = self:get_parent().Workers:get(self:get_id_worker())
 	do
-		local u, v = self:nicetx(c.args, self.nif, 'up', 0)
+		local u, v = self:nicetx(c.data, self.nif, 'up', 0)
 		self.widgets.icon_up.image = 
 			self:get_parent().ImageCache:get_image(self.image_path .. "up_" .. u .. ".png")
 		self.widgets.text_up.text = v --or 'n/a'
 	end
 	do 
-		local u, v = self:nicetx(c.args, self.nif, 'down', 0)
+		local u, v = self:nicetx(c.data, self.nif, 'down', 0)
 		self.widgets.icon_down.image = 
 			self:get_parent().ImageCache:get_image(self.image_path .. "down_" .. u .. ".png")
 		self.widgets.text_down.text = v --or 'n/a'

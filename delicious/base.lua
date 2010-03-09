@@ -68,13 +68,13 @@ function M:add_listener(event, _object)
 		self.events[event] = {}
 	end
 	if not self.events[event][tostring(_object)] then
-		self:debug("Add listener('" .. event .. "'): " .. tostring(_object))
+		self:debug(_object:get_module_name() .. " listen to our 'update' event")
 		self.events[event][_object] =  _object
 	end
 end
 
 function M:emit(event, id)
-	self:debug("emit " .. event .. " ["..id .."]")
+	self:debug("emit " .. event)
 	if not self.events then 
 		self:warn("No events table")
 		return 

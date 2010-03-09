@@ -3,13 +3,12 @@ local M = delicious_class(delicious:get_class('delicious.workers.base'), functio
 	s:set_debug(true)
 	s:debug("New module [" .. s:get_module_name() .. "]")
 	s.parent = arg[1]
-	s:set_refresh(arg[2].refresh)
-	s.nif = {}
+	s.data = {}
 	s.last_time = os.time()
+	s:set_refresh(arg[2].refresh)
 end)
 
 function M:update(elapsed)
-	print("Elapsed: " .. elapsed)
 	local f = io.open("/proc/net/dev")
 	if not f then
 		self:warn("Cannot open file /proc/net/dev")
@@ -21,20 +20,20 @@ function M:update(elapsed)
 		if name then 
 			rx = tonumber(rx)
 			tx = tonumber(tx)
-			if not self.nif[name] then
-				self.nif[name] = { rx = rx, tx = tx, down = 0, up = 0}
+			if not self.data[name] then
+				self.data[name] = { rx = rx, tx = tx, down = 0, up = 0}
 			end
 			local o = {
-				rx = self.nif[name].rx,
-				tx = self.nif[name].tx,
+				rx = self.data[name].rx,
+				tx = self.data[name].tx,
 			}
-			self.nif[name].rx   = rx
-			self.nif[name].tx   = tx
-			self.nif[name].down = (rx - o.rx) / elapsed  
-			self.nif[name].up   = (tx - o.tx) / elapsed  
-			print("name: " .. name .. ", rx: " .. rx .. ", tx: " .. tx .. ", down: " .. self.nif[name].down .. ", up: " .. self.nif[name].up)
+			self.data[name].rx   = rx
+			self.data[name].tx   = tx
+			self.data[name].down = (rx - o.rx) / elapsed  
+			self.data[name].up   = (tx - o.tx) / elapsed  
 		end
-	end	
+	end
+	io.close(f)	
 end
 
 return M
