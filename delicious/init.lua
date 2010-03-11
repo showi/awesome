@@ -11,7 +11,7 @@ local M = delicious_class(cbase, function(s, args)
 	s.class['delicious.base'] = cbase
 	s.class['delicious.class'] = class 
 	s:_base_init("delicious") -- Thing that all delicious module share
-	s:set_debug(false) -- turn on/off debugging
+	s:set_debug(true) -- turn on/off debugging
 	s.widget = {	
 		mt = {
 			__index = function(t, k) 
@@ -20,6 +20,15 @@ local M = delicious_class(cbase, function(s, args)
 		}
 	}
 	setmetatable(s.widget, s.widget.mt) 
+	s.fx = {
+		mt = {
+			__index = function(t, k) 
+				return s:get_class("delicious.fx." .. k)
+			end
+		}
+
+	}
+	setmetatable(s.fx, s.fx.mt) 
 	s.parent = nil
 	s:debug('Image cache: ' .. tostring(s.ImageCache))
 end)

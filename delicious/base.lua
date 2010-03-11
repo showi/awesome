@@ -29,7 +29,7 @@ function M:_base_init(name)
 	self._module = {
 		name = name
 	}
-	self.DEBUG = false 
+	self.DEBUG = true 
 end
 
 function M:set_module_name(n)

@@ -1,74 +1,75 @@
-local M = {}
-M.mt = {}
-M.prototype = {
-	name = nil,
-	index = 1,
-	--Images = {},
-	prefix = "",
-}
--- Composition
-M.factory = {}
-M.factory.Controller = require("delicious.fx.animation.controller")
-M.factory.Image = require("delicious.fx.animation.image")
+local M = delicious_class(delicious:get_class('delicious.base'), function(s, ...)
+	s:_base_init("delicious.fx.animation")
+	s.name = arg[1]
+	s.index = 1
+	s.prefix = arg[2].prefix
+	s.images = {}
+	s.animation_path = "delicious/animation/"
+	if arg[2] and arg[2].autoload then
+		s:load_from_dir()	
+	end
+end)
 
-M.cache = nil
+function M:make_path(i) 
+	return self.animation_path .. self.prefix .. self.name .. "/" .. self.name .. "-" .. i .. ".png"
+end
+
+function M:load_from_dir()
+	local util = delicious:get_class("delicious.util.file")
+	local i = 0
+	local imgpath = self:make_path(i)
+	print("imgpath:" .. imgpath) 
+	while imgpath and util.file_exists(delicious.ImageCache:get_path() .. imgpath) do
+		print('Animation [' .. i .. ']' .. imgpath)
+		self:insert_image(imgpath, 1)
+		i = i + 1
+		imgpath = self:make_path(i)
+	end
+	if i > 0 then
+		return true
+	end
+	self:warn("No image added from directory " .. self.name)
+	return false
+end
+
 -- Getters/Setters
-M.prototype.set_prefix = function(_s, prefix)
-	_s.prefix  = prefix
-end
-M.prototype.get_prefix = function(_s, prefix)
-	return _s.prefix
+function M:set_prefix(prefix)
+	self.prefix  = prefix
 end
 
--- Adding image to animation
-M.prototype.add_image = function(_s, path, duration)
-	if not duration then duration = 1 end
-	local rpath = _s.prefix .. path
-	--print("add image: " .. rpath)
-	if not M.cache then
-		print("Error: delicious.animation.cache nil cache")
-		return
-	end 
-	local i = M.factory.Image.new(rpath, duration)
-	_s.Images[_s.index] = i
-	_s.index = _s.index + 1
+function M:get_prefix(prefix)
+	return self.prefix
+end
+
+function M:insert_image(path, duration)
+	util = delicious:get_class("delicious.util.file")
+	if not util.file_exists(delicious.ImageCache:get_path() .. path) then
+		self:warn("Cannot add image to animation (invalid file)")
+		return false
+	end
+	self.images[self.index] = delicious:get_class("delicious.fx.animation.image")(path, duration)
+	self.index = self.index + 1
+	return true
 end
 
 -- Getting a controler 
-M.prototype.get_controller = function(_widget, _animation)
-	return M.factory.Controller.new(_widget, _animation)
+function M:get_controller(_widget)
+	return delicious:get_class("delicious.fx.animation.controller")(_widget, self)
 end
 
-M.prototype.get_image = function(_s, i)
-	if _s.Images then return _s.Images[i] end
-	print ("no image to return")
+function M:get_image(i)
+	if self.images then return self.images[i] end
+	self:warn("There's no image at index " .. i)
 	return nil
 end
 
-M.set_image_cache = function(cache)
-	M.cache = cache
-	M.factory.Image.set_image_cache(cache)
-end
-
-M.fromdir = function(path, name, max, refresh) 
+function M:fromdir(path, name, max, refresh) 
 	local a = M.new(name)
 	for i = 0, max do
 		local ipath = path .. name .. "-" .. i .. ".png", refresh
 		a.add_image(a, ipath, refresh)
 	end
 	return a
-end
-M.new = function(name)
-    local self = {}
-    setmetatable(self, M.mt)
-   	self.name = name
-	--self.cache = cache
-	self.Images = {}
-	return self
-end
-
-M.mt.__index = function(table, key)
-    return M.prototype[key]
 end
 
 return M

@@ -1,38 +1,23 @@
-local img_dir = awful.util.getdir("config") .. "/img/"
-local M = {}
-M.mt = {}
-M.prototype = {
-	path = "",
-	image = nil,
-	duration = nil
-}
-M.cache = {}
+local M = delicious_class(delicious:get_class("delicious.base"), function(s, ...)
+	s.path = arg[1]
+	s.image = nil
+	s.duration = arg[2]
+	print("Adding image: " .. s.path)
+	s.image = delicious.ImageCache:get_image(s.path)
+end)
 
-M.set_image_cache = function (cache)
-	print("Image module: setting image cache")
-	M.cache = cache
+function M:get_image()
+	return self.image
 end
 
-M.prototype.get_image = function(_s) --, path)
-	return _s.image -- M.cache.get_image(path)
+function M:get_duration()
+	return self.duration
 end
 
-
-M.new = function(path, duration)
-	local self = {
-	--	cache = cache
-	}
-    setmetatable(self, M.mt)
-    --self.path = path
-    self.duration = duration
-	--print("New image: " .. path .. ", " .. duration)
-	self.image = M.cache.get_image(path)
-	return self
+function M:set_duration(d)
+	self.duration = d
 end
 
-M.mt.__index = function(table, key)
-    return M.prototype[key]
-end
 
 return M
 

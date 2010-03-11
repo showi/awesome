@@ -1,87 +1,72 @@
-local img_dir = awful.util.getdir("config") .. "/img/"
-local M = {}
-M.mt = {}
-M.prototype = {
-	time = os.time(),
-	Animation = nil,
-	index = 1,
-	timer = nil,
-	speed = 1,
-}
---[[ Method start
+local M = delicious_class(delicious:get_class("delicious.base"), function(s, ...)
+	s.widget = arg[1]
+	s.Animation = arg[2]
+	s.time = os.time()
+	s.index = 1
+	s.timer = nil
+	s.speed = 1
+	--s.widget.image = s.Animation:get_image(1):get_image()
+end)
 	
-]]--
-M.prototype.set_speed = function(_s, speed)
-	_s.speed = speed
-end
-M.prototype.get_speed = function(_s, speed)
-	return _s.speed 
-end
-M.prototype.start = function(_s)
-	_s.index = 1
-	local i = _s.Animation.get_image(_s.Animation, 1)
-	_s.widget.image = i.get_image(i)
-	_s.timer = timer({ timeout = i.duration}) --function(_s) _s.next(_s) end)
-	_s.timer:add_signal("timeout", function()
-		if not _s.Animation then return end 
-		_s.timer.stop(_s.timer)
-		--print("---\ntimeout")
-		--print("flag: " .. _s.flag)
-		local i = _s.Animation.get_image(_s.Animation, _s.index)
-		if not i then
-			_s.index = 1
-			i = _s.Animation.get_image(_s.Animation, _s.index)
-		end
-		_s.widget.image = i.get_image(i)
-		_s.index = _s.index + 1
-		_s.timer.timeout = i.duration * _s.speed
-		_s.timer:start()
-	end)
-	_s.timer:start()
+function M:set_speed(speed)
+	self.speed = speed
 end
 
-M.prototype.stop = function(_s)
-	if not _s.timer then
+function M:get_speed(speed)
+	return self.speed 
+end
+
+function M:start()
+	print("Start")
+	self.index = 1
+	local i = self.Animation:get_image(1)
+	self.widget.image = i:get_image()
+	self.timer = timer({ timeout = i.duration}) --function(_s) _s.next(_s) end)
+	self.timer:add_signal("timeout", function()
+		if not self.Animation then return end 
+		self.timer:stop()
+		local i = self.Animation:get_image(self.index)
+		if not i then
+			self.index = 1
+			i = self.Animation:get_image(self.index)
+		end
+		self.widget.image = i:get_image(i)
+		self.index = self.index + 1
+		self.timer.timeout = i.duration * self.speed
+		self.timer:start()
+	end)
+	self.timer:start()
+end
+
+function M:stop()
+	if not self.timer then
 		return
 	end
-	_s.timer.stop()
-	_s.timer = nil
+	self.timer:stop()
+	self.timer = nil
 end
+
 -- Method next
-M.prototype.next = function(_s)
-	local d =  os.difftime(os.time(), _s.time)
-	if d > _s.current.duration then
-		local i = _s.index + 1
-		if not _s.Animation.images[i] then
-			if _s.index == 0 then
+function M:next()
+	local d =  os.difftime(os.time(), self.time)
+	if d > self.current.duration then
+		local i = self.index + 1
+		if not self.Animation.images[i] then
+			if self.index == 0 then
 				print("Erreur: there's no image")
 				return nil
 			end
-			_s.index = 0
+			self.index = 0
 		end
-		_s.index = _s.index + 1
-		local i = _s.Animation.get_image(_s.Animation, _s.index)
-		_s.widget.image = i.get_image(i)
-		_s.timer.timeout = i.duration * _s.speed
-		_s.timer.start()
+		self.index = self.index + 1
+		local i = self.Animation:get_image(self.index)
+		self.widget.image = i:get_image(i)
+		self.timer.timeout = i.duration * self.speed
+		self.timer:start()
 	end
 end
 
 
-M.new = function(_widget, _animation)
-	print("New controler")
-    local self = {}
-    setmetatable(self, M.mt)
-    --self.path = path
-	self.Animation = _animation
-	self.widget = _widget
-	self.index = 1
-	return self
-end
-
-M.mt.__index = function(table, key)
-    return M.prototype[key]
-end
 
 return M
 
