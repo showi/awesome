@@ -20,14 +20,13 @@ function M:get_path()
 end
 
 function M:get_image (path)
-	self:debug("Get image: " .. path)
 	local rpath = self.image_path .. path
 	if not self.cache[rpath] then
-		self:debug("Trying to cache image: " .. rpath)
 		if not self:file_exists(rpath) then
 			self:warn("Error: invalid image path, " .. rpath)
 			return self.bad_image	
 		end
+		self:debug("Loading image " .. path)
 		self.cache[rpath] = image(rpath)
 	end
 	return self.cache[rpath]	

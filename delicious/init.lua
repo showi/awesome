@@ -16,27 +16,24 @@ local M = delicious_class(cbase, function(s, args)
 		mt = {
 			__index = function(t, k) 
 				return s:get_class("delicious.widget." .. k)
-			end
-		}
-	}
+			end}
+		}	
 	setmetatable(s.widget, s.widget.mt) 
 	s.fx = {
 		mt = {
 			__index = function(t, k) 
 				return s:get_class("delicious.fx." .. k)
-			end
+			end}
 		}
-
-	}
 	setmetatable(s.fx, s.fx.mt) 
 	s.parent = nil
-	s:debug('Image cache: ' .. tostring(s.ImageCache))
 end)
 
 function M:_init()
 	self.ImageCache = self:get_class('delicious.util.image_cache')(self)
 	self.Workers    = self:get_class('delicious.workers')(self)
 end
+
 -- overide base class
 function M:set_parent()
 	set_parent = nil
@@ -47,35 +44,31 @@ end
 -- overide base class
 function M:set_module_name()
 end
+
 function M:get_module_name()
 	return "delicious"
 end
 
 function M:get_class(n)
 	if self.class[n] then
-		self:debug("Return delicious class " .. n)
 		return self.class[n]
 	end
-	self:debug("Creating and return class " .. n)
+	self:debug("Loading module " .. n)
 	self.class[n] = require(n)
 	return self.class[n]
 end
 
-function M:get_image_cache()
-	return self.ImageCache
+function M:get_image(n)
+ 	return self.ImageCache:get_image(n)
 end
 
-function M:get_worker_id(id)
+function M:get_worker(id)
 	return self.Workers:get(id)
 end
 
-function M:set_id_worker(id)
-	self.id_worker = id
+if delicious then
+	print("WARNING: delicious already defined")
+else
+	delicious = M()
+	delicious:_init()
 end
-
-function M:get_id_worker(id)
-	return self.id_worker
-end
-
-delicious = M()
-delicious:_init()

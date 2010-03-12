@@ -1,7 +1,5 @@
 local M = delicious_class(delicious:get_class('delicious.workers.base'), function(s, ...)
 	s:_base_init("delicious.workers.net")
-	s:set_debug(true)
-	s:debug("New module [" .. s:get_module_name() .. "]")
 	s.parent = arg[1]
 	s.data = {}
 	s.last_time = os.time()

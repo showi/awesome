@@ -20,6 +20,7 @@ function M:start()
 	if self.timer then
 		self.timer:stop()
 	end
+	self:update(1)
 	self.timer = timer({ timeout = self.refresh })
 	self.timer:add_signal("timeout", function() 
 		local e = os.time() - self.last_time

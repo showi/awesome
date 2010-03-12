@@ -8,6 +8,7 @@
         {"Pan", "pan"},
     }},
     { "Tools", {
+        {"Gnome Commander", "gnome-commander"},
         {"Thunar", "thunar"},
         {"Brasero", "brasero"},
     }},

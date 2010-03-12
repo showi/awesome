@@ -7,17 +7,8 @@ require("beautiful")
 -- Notification library
 require("naughty")
 -- Widget library
-require("vicious")
+--require("vicious")
 
-local udata = {
-	weather = {
-		station = "LSGC",
-		refresh = 29
-	},
-	cpufreq = {
-		cpu = "cpu0"
-	}
-}
 -- {{{ Variable definitions
 -- Themes define colours, icons, and wallpapers
 beautiful.init("/usr/local/share/awesome/themes/zenburn/theme.lua")
@@ -97,32 +88,35 @@ separator = widget({ type = "textbox" })
 separator.text  = "|"
 --- }}}
 
--- {{{ Widgets
---require("mywidgets/textclock")
---require("mywidgets/mem")
---require("mywidgets/cpu")
-
-w_image = widget({type = "imagebox"})
-
--- DELICIOUS ---
+-- 
+-- DELICIOUS
+--
 require("delicious") -- import global variable delicious
+do
+	local w = delicious:get_class("delicious.workers.wallpaper")(delicious, {refresh = 10})
+	w:start()
+end
+local w_cpu = delicious.widget.cpu({refresh = 3})
 -- CPUFREQ widget ---
 local w_cpufreq = delicious.widget.cpufreq ({
 	cpu = 0, 
 	refresh = 3,
 })
---- NET WIDGET ---
+-- NET widget 0 ---
 local w_net0 = delicious.widget.net ({
 	refresh = 2,
 	nif = "lo"
 })
 function w_net0:get_widgets() -- subclassing our widget method get_widgets()
-	return { layout = awful.widget.layout.horizontal.rightleft,
+	return { 
+		--	layout = awful.widget.layout.horizontal.rightleft,
 			{ self.widgets.icon_up,
 			  layout = awful.widget.layout.horizontal.rightleft, },
 			{ self.widgets.icon_down,
-			  layout = awful.widget.layout.horizontal.rightleft, },}
+			  layout = awful.widget.layout.horizontal.rightleft, },
+		}
 end
+-- NET widget 1 ---
 local w_net1 = delicious.widget.net ({
 	refresh = 5,
 	nif = "eth1"
@@ -130,6 +124,7 @@ local w_net1 = delicious.widget.net ({
 
 -- Create a systray
 mysystray = widget({ type = "systray" })
+
 -- Create a wibox for each screen and add it
 mywibox = {}
 mypromptbox = {}
@@ -199,12 +194,15 @@ for s = 1, screen.count() do
             layout = awful.widget.layout.horizontal.leftright,
         	width = 100
 		},
-        mylayoutbox[s], separator,
-		w_cpufreq:get_widgets(), separator, 
-		w_net0:get_widgets(), separator,
-		w_net1:get_widgets(), separator,
-		--w_net:get_widgets(), separator,
-        
+        --test.widgets(),
+		mylayoutbox[s],
+		{ w_cpufreq:get_widgets(), 
+		 w_net0:get_widgets(),
+		 w_net1:get_widgets(),
+		 w_cpu:get_widgets(),
+         layout = awful.widget.layout.horizontal.rightleft,
+       	 --anim_widgets, separator, 
+		},
 	s == 1 and mysystray or nil,
         mytasklist[s],
         layout = awful.widget.layout.horizontal.rightleft
@@ -237,7 +235,6 @@ globalkeys = awful.util.table.join(
             if client.focus then client.focus:raise() end
         end),
     awful.key({ modkey,           }, "w", function () mymainmenu:show(true)        end),
-
     -- Layout manipulation
     awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end),
     awful.key({ modkey, "Shift"   }, "k", function () awful.client.swap.byidx( -1)    end),

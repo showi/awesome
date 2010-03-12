@@ -1,7 +1,5 @@
 local M = delicious_class(delicious:get_class('delicious.workers.base'), function(s, ...)
 	s:_base_init("delicious.workers.cpufreq")
-	s:set_debug(true)
-	s:debug("New module [" .. s:get_module_name() .. "]")
 	s.parent = arg[1]
 	s.base_path = "/sys/devices/system/cpu"
 	s.data = {}
@@ -12,7 +10,7 @@ local M = delicious_class(delicious:get_class('delicious.workers.base'), functio
 	s:set_refresh(arg[2].refresh)
 end)
 
-function string:split(delimiter)
+function string:split(delimiter) -- must be moved 
   local result = { }
   local from  = 1
   local delim_from, delim_to = string.find( self, delimiter, from  )
@@ -25,7 +23,7 @@ function string:split(delimiter)
   return result
 end
 
-function minmax(t)
+local function minmax(t)
 	local min, max = nil
 	for i, n in pairs(t) do
 		if not min then
@@ -42,6 +40,7 @@ function minmax(t)
 	end
 	return min ,max
 end
+
 function M:probe()
 	local f = io.popen("ls -la " .. self.base_path)
 	if not f then
@@ -80,7 +79,6 @@ function M:probe()
 	end
 	return true	
 end
-
 
 function M:update(elapsed)
 	for id, t in pairs(self.data) do

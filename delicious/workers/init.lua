@@ -6,7 +6,7 @@ local M = delicious_class(delicious:get_class('delicious.base'), function(s, ...
 end)
 
 local function args_to_id(wtype, args) 
-	if wtype == "net" or wtype == "cpufreq" then
+	if wtype == "net" or wtype == "cpufreq" or wtype == "cpu" then
 		return wtype
 	end
 	local str = ""
