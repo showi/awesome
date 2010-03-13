@@ -5,8 +5,9 @@ local M = delicious_class(delicious:get_class('delicious.base'), function(s, ...
 	s.widget = widget({type = "textbox"})
 end)
 
-local function args_to_id(wtype, args) 
-	if string.match(wtype, "^(net|cpufreq|cpu)$") then
+local function args_to_id(wtype, args)
+	 
+	if string.match(wtype, "^net|cpufreq|cpu$") then
 		return wtype
 	end
 	local str = ""
@@ -35,10 +36,20 @@ function M:notify(id, ntype)
 end
 
 function M:add(wtype, args)
-	local id = args_to_id(wtype, args) 
+	if not args.refresh or args.refresh < 1 then
+		self:warn("refresh value must be bound to 1 <= refresh <= n, so we use a refresh of 3s")
+		args.refresh = 3
+	end
+	local mname = "delicious.workers." .. wtype
+	local w = delicious:get_class(mname)
+	if not w then
+		self:debug("Cannot create worker " .. wtype)
+		return nil
+	end	
+	local id = w:args_to_id(mname, args)
 	if not self.workers[id] then	
 		self:debug("Add worker: " .. id)
-		self.workers[id] = delicious:get_class("delicious.workers." .. wtype)(delicious, args)
+		self.workers[id] = delicious:get_class(mname)(delicious, args)
 		self.workers[id]:start()
 	end
 	return id

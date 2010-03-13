@@ -52,5 +52,8 @@ function M:stop()
 	end
 end
 
+function M:args_to_id(wtype, args)
+	return wtype
+end
 
 return M

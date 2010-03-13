@@ -54,7 +54,13 @@ function M:get_class(n)
 		return self.class[n]
 	end
 	self:debug("Loading module " .. n)
-	self.class[n] = require(n)
+--	local status, m = pcall(function() return require(n) end)
+--	if not status then
+--		self:debug("Cannot load module" .. n .. ": ")
+--		return false
+--	end
+	local m = require(n) 
+	self.class[n] = m
 	return self.class[n]
 end
 

@@ -74,6 +74,7 @@ mylauncher = awful.widget.launcher({ image = image(beautiful.awesome_icon),
 mytextclock = awful.widget.textclock({ align = "right" })
 
 require("delicious")
+--local tk_tags = delicious:get_class("delicious.tk.widget.tags")()
 do
 	local w = delicious:get_class("delicious.workers.wallpaper")(delicious, { refresh = 3600})
 	w:start()
@@ -82,7 +83,7 @@ local w_deli = {
 		cpu     = delicious.widget.cpu({ refresh = 3 }),
 		cpufreq = delicious.widget.cpufreq({ cpu = 0, refresh = 3 }),
 		net0    = delicious.widget.net({ nif = "eth1", refresh = 2 }),
-		net1    = delicious.widget.net({ nif = "lo", refresh = 1 }),
+		net1    = delicious.widget.net({ nif = "lo", refresh = 3 }),
 }
 -- Create a systray
 mysystray = widget({ type = "systray" })
@@ -158,6 +159,7 @@ for s = 1, screen.count() do
         mylayoutbox[s],
         mytextclock,
 		{
+			--tk_tags:get_widgets(),
 			w_deli.cpu:get_widgets(),
 			w_deli.net0:get_widgets(),
 			w_deli.net1:get_widgets(),

@@ -11,6 +11,7 @@ local M = delicious_class(delicious:get_class('delicious.workers.base'), functio
 	s:set_refresh(arg[2].refresh)
 end)
 
+
 function string:split(delimiter) -- must be moved 
   local result = { }
   local from  = 1

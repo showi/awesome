@@ -47,7 +47,12 @@ local M = delicious_class(delicious:get_class("delicious.widget.base"), function
 	s.widgets.text_down.text = "n/a"
 	s:set_id_worker(s:get_parent().Workers:add('net', arg[1]))
 	local w = s:get_parent():get_worker(s:get_id_worker())
-	w:add_listener('update', s)
+	if not w.data[s.nif] then 
+		s:warn("Invalid interface " .. s.nif .. " (You may check your configuration)")
+	else
+		w.data[s.nif].active = true	 
+		w:add_listener('update', s)
+	end
 end)
 
 function M:get_widgets()
@@ -99,6 +104,10 @@ function M:onupdate()
 		return false
 	end
 	local c = self:get_parent():get_worker(self:get_id_worker())
+	if not c.data[self.nif] then
+		self:warn("No data for interface "..self.nif.." (You may need to check your configuration)")
+		return
+	end
 	if not c.data[self.nif].update then
 		--print(self:get_module_name() .. "["..self.nif.."] don't need updating his display")
 		return false

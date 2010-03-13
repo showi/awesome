@@ -15,8 +15,12 @@ local M = delicious_class(delicious:get_class('delicious.widget.base'), function
 	s.widgets.icon.bg = beautiful.bg_normal
 	s.widgets.icon.image = s.parent.ImageCache:get_image(s.image_path .. "na.png")
 	local w = s:get_parent():get_worker(s:get_id_worker())
-	w:set_active(s.cpu)
-	w:add_listener('update', s)
+	if not w.data[s.cpu] then
+		s:warn("No data for cpu" .. s.cpu .. " (You may check your configuration)")
+	else
+		w:set_active(s.cpu)
+		w:add_listener('update', s)
+	end
 end)
 
 function M:onupdate()
