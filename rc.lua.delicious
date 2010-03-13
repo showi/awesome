@@ -82,7 +82,7 @@ local w_deli = {
 		cpu     = delicious.widget.cpu({ refresh = 3 }),
 		cpufreq = delicious.widget.cpufreq({ cpu = 0, refresh = 3 }),
 		net0    = delicious.widget.net({ nif = "eth1", refresh = 2 }),
-		net1    = delicious.widget.net({ nif = "lo", refresh = 2 }),
+		net1    = delicious.widget.net({ nif = "lo", refresh = 1 }),
 }
 -- Create a systray
 mysystray = widget({ type = "systray" })
@@ -161,7 +161,8 @@ for s = 1, screen.count() do
 			w_deli.cpu:get_widgets(),
 			w_deli.net0:get_widgets(),
 			w_deli.net1:get_widgets(),
-			layout = awful.widget.layout.horizontal.rightleft
+			w_deli.cpufreq:get_widgets(),
+			layout = awful.widget.layout.horizontal.leftright
 		},
         s == 1 and mysystray or nil,
         --mytasklist[s],
