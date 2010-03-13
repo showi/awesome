@@ -25,8 +25,9 @@ function M:start()
 	self.timer:add_signal("timeout", function() 
 		local e = os.time() - self.last_time
 		if e < 1 then e = 1 end
-		self:update(e)
-		self:emit('update') 
+		if self:update(e) then
+			self:emit('update') 
+		end
 		self.last_time = os.time()
 	end)
 	self.timer:start()

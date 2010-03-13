@@ -9,14 +9,6 @@ local M = delicious_class(delicious:get_class('delicious.workers.base'), functio
 	s:set_refresh(arg[2].refresh)
 end)
 
-function M:calculate_usage()
-	if not data then
-		self:warn("No data supplied")
-		return
-	end
-	local diff_total = data.total_new
-end
-
 function M:update(elapsed)
 	local fcpu = "/proc/stat"
 	local f = io.open(fcpu)
@@ -29,15 +21,16 @@ function M:update(elapsed)
 		local c = {}
 		c.user, c.nice, c.system = string.match(line, "^%s*cpu%s+(%d+)%s+(%d+)%s(%d+).*$")
 		if c.user then
-			local u = ((c.user+c.system+c.nice) 
-				- (self.data.total.user+self.data.total.nice+self.data.total.system)) / elapsed
-			self.data.total.user = c.user
-			self.data.total.nice = c.nice
-			self.data.total.system = c.system
-			self.data.total.usage = u
+				local u = ((c.user+c.system+c.nice) 
+					- (self.data.total.user+self.data.total.nice+self.data.total.system)) / elapsed
+				self.data.total.user = c.user
+				self.data.total.nice = c.nice
+				self.data.total.system = c.system
+				self.data.total.usage = u
 		end	
 	end
 	io.close(f)
+	return true
 end
 
 return M

@@ -6,7 +6,7 @@ local M = delicious_class(delicious:get_class('delicious.base'), function(s, ...
 end)
 
 local function args_to_id(wtype, args) 
-	if wtype == "net" or wtype == "cpufreq" or wtype == "cpu" then
+	if string.match(wtype, "^(net|cpufreq|cpu)$") then
 		return wtype
 	end
 	local str = ""
@@ -43,20 +43,6 @@ function M:add(wtype, args)
 	end
 	return id
 end
-
---function M:set(args)
---	local w = self:get(args.id)
---	if w then
---		self:warn("Worker with id " .. args.id .. " already set")
---		return w
---	end
---	local Cworker = delicious:get_class("delicious.workers.one")
---	if not self.workers[args.id] then
---			self:debug("New " .. args.wtype .. " with " .. args.id)	
---	end
---	self.workers[args.id] = Cworker(self, args)
---	return self.workers[args.id]
---end
 
 function M:get(id)
 	if self.workers[id] then

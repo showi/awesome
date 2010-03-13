@@ -6,16 +6,14 @@ require("awful.rules")
 require("beautiful")
 -- Notification library
 require("naughty")
--- Widget library
---require("vicious")
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, and wallpapers
-beautiful.init("/usr/local/share/awesome/themes/zenburn/theme.lua")
+beautiful.init("/usr/share/awesome/themes/default/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
 terminal = "roxterm"
-editor = os.getenv("EDITOR") or "nano"
+editor = os.getenv("EDITOR") or "gvim"
 editor_cmd = terminal .. " -e " .. editor
 
 -- Default modkey.
@@ -42,86 +40,50 @@ layouts =
     awful.layout.suit.magnifier
 }
 -- }}}
-apptags = {
-	["roxterm"] = { screen = 1, tag = 1 }, 
-}
+
 -- {{{ Tags
 -- Define a tag table which hold all screen tags.
-tags = {
-	names = {"term", "nw", "im", "media", "files", 6, 7, 8, 9 },
-	layout = { 	layouts[2], layouts[1], layouts[1], layouts[1], layouts[1], 
-				layouts[1], layouts[1], layouts[1], layouts[1]
-			
-	}
-}
+tags = {}
 for s = 1, screen.count() do
     -- Each screen has its own tag table.
-    tags[s] = awful.tag(tags.names, s, tags.layout)
+    tags[s] = awful.tag({ 'term', 'net', 'im', 'other'}, s, layouts[2])
 end
 -- }}}
 
-config_dir = awful.util.getdir("config") 
 -- {{{ Menu
 -- Create a laucher widget and a main menu
 myawesomemenu = {
-   { "Xephyr", awful.util.getdir("config") .. "/Xephyr/start.sh" },
    { "manual", terminal .. " -e man awesome" },
    { "edit config", editor_cmd .. " " .. awful.util.getdir("config") .. "/rc.lua" },
    { "restart", awesome.restart },
    { "quit", awesome.quit }
 }
-
-require("mymenus/apps")
-
-mymainmenu = awful.menu({ items = { 
-	{ "App", m_apps, beautiful.awesome_icon },
-	{ "Awesome", myawesomemenu, beautiful.awesome_icon },
-    { "open terminal", terminal }
-}})
+--require("mymenu/apps")
+mymainmenu = awful.menu({ items = { --{ "[Apps]", m_apps, beautiful.awesome_icon},
+									{ "awesome", myawesomemenu, beautiful.awesome_icon },
+                                    { "open terminal", terminal }
+                                  }
+                        })
 
 mylauncher = awful.widget.launcher({ image = image(beautiful.awesome_icon),
                                      menu = mymainmenu })
 -- }}}
 
---- {{{ Separator
-separator = widget({ type = "textbox" })
-separator.text  = "|"
---- }}}
+-- {{{ Wibox
+-- Create a textclock widget
+mytextclock = awful.widget.textclock({ align = "right" })
 
--- 
--- DELICIOUS
---
-require("delicious") -- import global variable delicious
+require("delicious")
 do
-	local w = delicious:get_class("delicious.workers.wallpaper")(delicious, {refresh = 10})
+	local w = delicious:get_class("delicious.workers.wallpaper")(delicious, { refresh = 3600})
 	w:start()
 end
-local w_cpu = delicious.widget.cpu({refresh = 3})
--- CPUFREQ widget ---
-local w_cpufreq = delicious.widget.cpufreq ({
-	cpu = 0, 
-	refresh = 3,
-})
--- NET widget 0 ---
-local w_net0 = delicious.widget.net ({
-	refresh = 2,
-	nif = "lo"
-})
-function w_net0:get_widgets() -- subclassing our widget method get_widgets()
-	return { 
-		--	layout = awful.widget.layout.horizontal.rightleft,
-			{ self.widgets.icon_up,
-			  layout = awful.widget.layout.horizontal.rightleft, },
-			{ self.widgets.icon_down,
-			  layout = awful.widget.layout.horizontal.rightleft, },
-		}
-end
--- NET widget 1 ---
-local w_net1 = delicious.widget.net ({
-	refresh = 5,
-	nif = "eth1"
-})
-
+local w_deli = {
+		cpu     = delicious.widget.cpu({ refresh = 3 }),
+		cpufreq = delicious.widget.cpufreq({ cpu = 0, refresh = 3 }),
+		net0    = delicious.widget.net({ nif = "eth1", refresh = 2 }),
+		net1    = delicious.widget.net({ nif = "lo", refresh = 2 }),
+}
 -- Create a systray
 mysystray = widget({ type = "systray" })
 
@@ -191,20 +153,18 @@ for s = 1, screen.count() do
             mylauncher,
             mytaglist[s],
             mypromptbox[s],
-            layout = awful.widget.layout.horizontal.leftright,
-        	width = 100
+            layout = awful.widget.layout.horizontal.leftright
+        },
+        mylayoutbox[s],
+        mytextclock,
+		{
+			w_deli.cpu:get_widgets(),
+			w_deli.net0:get_widgets(),
+			w_deli.net1:get_widgets(),
+			layout = awful.widget.layout.horizontal.rightleft
 		},
-        --test.widgets(),
-		mylayoutbox[s],
-		{ w_cpufreq:get_widgets(), 
-		 w_net0:get_widgets(),
-		 w_net1:get_widgets(),
-		 w_cpu:get_widgets(),
-         layout = awful.widget.layout.horizontal.rightleft,
-       	 --anim_widgets, separator, 
-		},
-	s == 1 and mysystray or nil,
-        mytasklist[s],
+        s == 1 and mysystray or nil,
+        --mytasklist[s],
         layout = awful.widget.layout.horizontal.rightleft
     }
 end
@@ -235,6 +195,7 @@ globalkeys = awful.util.table.join(
             if client.focus then client.focus:raise() end
         end),
     awful.key({ modkey,           }, "w", function () mymainmenu:show(true)        end),
+
     -- Layout manipulation
     awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end),
     awful.key({ modkey, "Shift"   }, "k", function () awful.client.swap.byidx( -1)    end),
@@ -263,9 +224,6 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "space", function () awful.layout.inc(layouts,  1) end),
     awful.key({ modkey, "Shift"   }, "space", function () awful.layout.inc(layouts, -1) end),
 
-  	-- Screenshot
-	awful.key({ modkey,           }, "Print", function () awful.util.spawn("gpe-screenshot") end),
-	awful.key({ modkey,           }, "Menu", function () awful.util.spawn("~/.config/awesome/Zephyr/start.sh") end),
     -- Prompt
     awful.key({ modkey },            "r",     function () mypromptbox[mouse.screen]:run() end),
 
@@ -345,23 +303,20 @@ root.keys(globalkeys)
 awful.rules.rules = {
     -- All clients will match this rule.
     { rule = { },
-      properties = { border_width = beautiful.border_width,
+      properties = { border_width =  1, -- beautiful.border_width,
                      border_color = beautiful.border_normal,
                      focus = true,
                      keys = clientkeys,
                      buttons = clientbuttons } },
-    { rule = { class = "Navigator" },
-      properties = { tag = tags[2], floating = false } },
     { rule = { class = "MPlayer" },
       properties = { floating = true } },
     { rule = { class = "pinentry" },
       properties = { floating = true } },
     { rule = { class = "gimp" },
       properties = { floating = true } },
-    { rule = { class = "chromium-browser" },
-      properties = { floating = false, tag = tags[1][2] } },
-
-	-- Set Firefox to always map on tags number 2 of screen 1.
+    { rule = { class = "Chromium-browser" },
+      properties = { floating = true, tag = tags[1][2]} },
+    -- Set Firefox to always map on tags number 2 of screen 1.
     -- { rule = { class = "Firefox" },
     --   properties = { tag = tags[1][2] } },
 }
@@ -371,7 +326,7 @@ awful.rules.rules = {
 -- Signal function to execute when a new client appears.
 client.add_signal("manage", function (c, startup)
     -- Add a titlebar
-     awful.titlebar.add(c, { modkey = modkey })
+    -- awful.titlebar.add(c, { modkey = modkey })
 
     -- Enable sloppy focus
     c:add_signal("mouse::enter", function(c)

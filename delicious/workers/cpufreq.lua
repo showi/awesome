@@ -1,5 +1,6 @@
 local M = delicious_class(delicious:get_class('delicious.workers.base'), function(s, ...)
 	s:_base_init("delicious.workers.cpufreq")
+	s:set_debug(true)
 	s.parent = arg[1]
 	s.base_path = "/sys/devices/system/cpu"
 	s.data = {}
@@ -81,19 +82,27 @@ function M:probe()
 end
 
 function M:update(elapsed)
+	local change = false
 	for id, t in pairs(self.data) do
 		if not self:is_active(id) then
+			return false
 		else
 			local file =  self.base_path .. "/cpu" .. id .. "/cpufreq/scaling_cur_freq"
 			local f = io.open(file)
 			if not f then	
 				self:warn("Cannot read current frequency file: " .. file)
+				return false
 			else
-				self.data[id].cur_freq = tonumber(f:read())
+				local nfreq = tonumber(f:read())
+				if nfreq ~= self.data[id].cur_freq then
+					change = true
+					self.data[id].cur_freq = nfreq
+				end
 				io.close(f)
 			end
 		end
 	end
+	return change
 end
 
 return M

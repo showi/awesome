@@ -13,7 +13,7 @@ local M = delicious_class(delicious:get_class("delicious.widget.base"), function
 	s.image_path = "delicious/widget/net/"
 	s.theme = {
 		width = 30,
-        bg_color = beautiful.bg_focus,
+        bg_color = beautiful.bg_normal,
         color = "#FFFFF",
         images = { 
             down_b  = "down_b.png",
@@ -29,7 +29,7 @@ local M = delicious_class(delicious:get_class("delicious.widget.base"), function
             image_ratescaling = false,
         },
 	}
-	s.widgets.label.text = "["..s.nif.."]"
+	s.widgets.label.text = s.nif
 	s.widgets.label.bg = s.theme.bg_color
 	s.widgets.text_down.bg = s.theme.bg_color
 	s.widgets.text_down.width = 30
@@ -58,11 +58,11 @@ function M:get_widgets()
 			self.widgets.text_up, self.widgets.icon_up,
 			layout = awful.widget.layout.horizontal.rightleft,
 		},
+		self.widgets.label,
 		{
 			self.widgets.icon_down, self.widgets.text_down,
 			layout = awful.widget.layout.horizontal.rightleft,
 		},
-		self.widgets.label,
 	}
 end
 
@@ -96,9 +96,13 @@ end
 function M:onupdate()
 	if not self.parent then
 		self:warn(self:get_module_name() .. " No parent, so no data")
-		return
+		return false
 	end
 	local c = self:get_parent():get_worker(self:get_id_worker())
+	if not c.data[self.nif].update then
+		--print(self:get_module_name() .. "["..self.nif.."] don't need updating his display")
+		return false
+	end
 	do
 		local u, v = self:nicetx(c.data, self.nif, 'up', 0)
 		self.widgets.icon_up.image = 
@@ -111,5 +115,6 @@ function M:onupdate()
 			self:get_parent():get_image(self.image_path .. "down_" .. u .. ".png")
 		self.widgets.text_down.text = v --or 'n/a'
 	end
+	return true
 end
 return M

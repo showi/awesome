@@ -12,7 +12,7 @@ local M = delicious_class(delicious:get_class('delicious.widget.base'), function
 		icon = widget({type = "imagebox"}),
 		layout = awful.widget.layout.horizontal.rightleft
 	}
-	s.widgets.icon.bg = beautiful.bg_focus
+	s.widgets.icon.bg = beautiful.bg_normal
 	s.widgets.icon.image = s.parent.ImageCache:get_image(s.image_path .. "na.png")
 	local w = s:get_parent():get_worker(s:get_id_worker())
 	w:set_active(s.cpu)
@@ -24,7 +24,7 @@ function M:onupdate()
 		self:warn(self:get_module_name() .. " No parent, so no data")
 		return
 	end
-	local data = self:get_parent():get_worker(self:get_id_worker()).data[self.cpu] 
+	local data = self:get_parent():get_worker(self:get_id_worker()).data[self.cpu]
 	local name = ""
 	if data.cur_freq == data.freq_steps[4]  then
 		name = "4.png"
@@ -36,7 +36,7 @@ function M:onupdate()
 		name = "1.png"
 	end 	
 	self.widgets.icon.image = self:get_parent():get_image(self.image_path .. name)
-	return self
+	return true
 end
 
 return M
