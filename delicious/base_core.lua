@@ -1,6 +1,5 @@
-local _module_name = "delicious.base_core"
 local M = delicious_class(function(s, args)
-	s:set_module_name(_module_name)
+	s:set_module_name("delicious.base_core")
 end)
 
 function M:set_debug(b)
@@ -24,7 +23,8 @@ function M:debug(msg)
 end
 
 function M:warn(msg)
-	self:log("[WARN] " .. msg)
+	local m = string.format("%10s", "[WARN][ " ..self:get_module_name() .. " ] " .. msg)
+	self:log(m)
 end
 
 function M:_base_init(name)

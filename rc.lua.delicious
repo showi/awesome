@@ -51,7 +51,6 @@ end
 -- }}}
 
 require("delicious")
-
 local anim_alien = {
 	a = delicious.fx.animation("smwqblock", {prefix = "game/", autoload = 1}),
 	w = widget({type = "imagebox"}),
@@ -69,35 +68,34 @@ myawesomemenu = {
    { "quit", awesome.quit }
 }
 
-local delimenu = delicious:get_class("delicious.menu")(delicious, {
-	lang = "fr", 
-	depth = 1,
-	filter = { "GNOME", "GTK", "Application" },
-	list = {
-		"firefox", "gmpc", "Thunar", "pan", "chromium-browser", "gimp", "roxterm", "filezilla",
-		"transmission", "pidgin", "eclipse", "tomboy", "vlc", "mplayer", "evince", "chmsee", 
-		"nvidia-settings", "empathy" 
+
+mymainmenu = awful.menu({ items = { 
+		{ "Applications", delicious:get_class("delicious.menu")( delicious, {
+				lang = "fr", 
+				depth = 1,
+				filter = { "GNOME", "GTK", "Application" },
+				list = {
+					"firefox", "gmpc", "Thunar", "pan", "chromium-browser", 
+					"gimp", "roxterm", "filezilla", "transmission", "pidgin", 
+					"eclipse", "tomboy", "vlc", "mplayer", "evince", "chmsee", 
+					"nvidia-settings", "empathy" 
+				}
+			}):get()},
+		{ "awesome", myawesomemenu, beautiful.awesome_icon },
+        { "open terminal", terminal }
 	}
 })
 
-mymainmenu = awful.menu({ items = { { "Applications", delimenu:get()},
-									{ "awesome", myawesomemenu, beautiful.awesome_icon },
-                                    { "open terminal", terminal }
-                                  }
-                        })
-
 mylauncher = awful.widget.launcher({ image = image(beautiful.awesome_icon),
-                                     menu = mymainmenu}) --mymainmenu })
+                                     menu = mymainmenu}) 
 -- }}}
 
 -- {{{ Wibox
 -- Create a textclock widget
 mytextclock = awful.widget.textclock({ align = "right" })
 
-do
-	local w = delicious:get_class("delicious.workers.wallpaper")(delicious, { refresh = 3600})
-	w:start()
-end
+delicious:get_class("delicious.workers.wallpaper")(delicious, { refresh = 3600 }):start()
+
 local w_deli = {
 		cpu     = delicious.widget.cpu({ refresh = 3 }),
 		cpufreq = delicious.widget.cpufreq({ cpu = 0, refresh = 3 }),

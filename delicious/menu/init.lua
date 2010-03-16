@@ -13,7 +13,11 @@ local M = delicious_class(delicious:get_class("delicious.base_core"), function(s
 	if arg[2].depth then s.prop.category.depth   = arg[2].depth end
 	if arg[2].filter then s.prop.category.filter = arg[2].filter end
 	local list = arg[2].list
-	s:build(list)
+	if not arg[2].list then 
+		s:warn("Cannot build menu without argument list")
+	else
+		s:build(arg[2].list)
+	end
 end)
 
 local icon_default_app    = awful.util.getdir("config") .. "/img/delicious/pixmaps/default-app.png"

@@ -117,7 +117,6 @@ function M:onupdate()
 		return
 	end
 	if not c.data[self.nif].update then
-		--print(self:get_module_name() .. "["..self.nif.."] don't need updating his display")
 		return false
 	end
 	do
@@ -134,4 +133,5 @@ function M:onupdate()
 	end
 	return true
 end
+
 return M

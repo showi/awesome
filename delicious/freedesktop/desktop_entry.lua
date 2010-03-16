@@ -53,7 +53,7 @@ function M:read(_name)
 			self:parse_line(line)
 		end
 	end
-	io.close(h)
+	h:close()
 	return found_tag
 end
 

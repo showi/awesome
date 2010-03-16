@@ -40,7 +40,7 @@ function M:get_prefix(prefix)
 end
 
 function M:insert_image(path, duration)
-	util = delicious:get_class("delicious.util.file")
+	local util = delicious:get_class("delicious.util.file")
 	if not util.file_exists(delicious.ImageCache:get_path() .. path) then
 		self:warn("Cannot add image to animation (invalid file)")
 		return false

@@ -6,17 +6,16 @@ local M = delicious_class(delicious:get_class('delicious.base'), function(s, ...
 end)
 
 local function args_to_id(wtype, args)
-	 
 	if string.match(wtype, "^net|cpufreq|cpu$") then
 		return wtype
 	end
 	local str = ""
 	for t, v in pairs(args) do
 		if t ~= "refresh" then
-		local tv = type(v)
-		if tv == "string" or tv == "number" then
-			str = ":"..str .. v
-		end	
+			local tv = type(v)
+			if tv == "string" or tv == "number" then
+				str = ":"..str .. v
+			end	
 		end
 	end
 	return str
