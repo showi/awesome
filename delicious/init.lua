@@ -1,3 +1,16 @@
+function string:split(delimiter) -- must be moved 
+  local result = { } 
+  local from  = 1 
+  local delim_from, delim_to = string.find( self, delimiter, from  )
+  while delim_from do
+    table.insert( result, string.sub( self, from , delim_from-1 ) ) 
+    from  = delim_to + 1 
+    delim_from, delim_to = string.find( self, delimiter, from  )
+  end 
+  table.insert( result, string.sub( self, from  ) ) 
+  return result
+end
+
 --[[ DELICIOUS
 	There's only two global variable exported by this module
 	- delicious namespace to access all delicious functionality
@@ -54,11 +67,6 @@ function M:get_class(n)
 		return self.class[n]
 	end
 	self:debug("Loading module " .. n)
---	local status, m = pcall(function() return require(n) end)
---	if not status then
---		self:debug("Cannot load module" .. n .. ": ")
---		return false
---	end
 	local m = require(n) 
 	self.class[n] = m
 	return self.class[n]
@@ -78,3 +86,4 @@ else
 	delicious = M()
 	delicious:_init()
 end
+return delicious

@@ -29,16 +29,25 @@ local M = delicious_class(delicious:get_class("delicious.widget.base"), function
             image_ratescaling = false,
         },
 	}
+	-- LABEL
 	s.widgets.label.text = s.nif
 	s.widgets.label.bg = s.theme.bg_color
+	-- TEXT DOWN
+	s.widgets.text_down.text = "000"
+	local e = s.widgets.text_down:extents()
+	s.widgets.text_down.width = e.width
 	s.widgets.text_down.bg = s.theme.bg_color
-	s.widgets.text_down.width = 30
 	s.widgets.text_down.align = 'right' 
 	s.widgets.icon_down.bg = s.theme.bg_color
+	-- TEXT UP
+	s.widgets.text_up.text = "000"
+	e = s.widgets.text_up:extents()
+	s.widgets.text_up.width = e.width
 	s.widgets.text_up.bg = s.theme.bg_color
-	s.widgets.text_up.width = 30
+	s.widgets.text_up.width = 25
 	s.widgets.text_up.align = 'left' 
 	s.widgets.icon_up.bg = s.theme.bg_color
+	
 	s.widgets.icon_up.image   = 
 		s:get_parent():get_image(s.image_path .. s.theme.images.up_kb)
 	s.widgets.icon_down.image 
@@ -57,7 +66,6 @@ end)
 
 function M:get_widgets()
 	return {
-		width = 200,
 		layout = awful.widget.layout.horizontal.rightleft,
 		{	
 			self.widgets.text_up, self.widgets.icon_up,

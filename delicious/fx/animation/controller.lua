@@ -1,11 +1,11 @@
 local M = delicious_class(delicious:get_class("delicious.base"), function(s, ...)
+	s:_base_init("delicious.fx.animation.controller")
 	s.widget = arg[1]
 	s.Animation = arg[2]
 	s.time = os.time()
 	s.index = 1
 	s.timer = nil
 	s.speed = 1
-	--s.widget.image = s.Animation:get_image(1):get_image()
 end)
 	
 function M:set_speed(speed)
@@ -17,11 +17,10 @@ function M:get_speed(speed)
 end
 
 function M:start()
-	print("Start")
 	self.index = 1
 	local i = self.Animation:get_image(1)
 	self.widget.image = i:get_image()
-	self.timer = timer({ timeout = i.duration}) --function(_s) _s.next(_s) end)
+	self.timer = timer({ timeout = i.duration}) 
 	self.timer:add_signal("timeout", function()
 		if not self.Animation then return end 
 		self.timer:stop()
@@ -46,14 +45,13 @@ function M:stop()
 	self.timer = nil
 end
 
--- Method next
 function M:next()
 	local d =  os.difftime(os.time(), self.time)
 	if d > self.current.duration then
 		local i = self.index + 1
 		if not self.Animation.images[i] then
 			if self.index == 0 then
-				print("Erreur: there's no image")
+				self:warn("Erreur: there's no image")
 				return nil
 			end
 			self.index = 0
@@ -65,8 +63,6 @@ function M:next()
 		self.timer:start()
 	end
 end
-
-
 
 return M
 

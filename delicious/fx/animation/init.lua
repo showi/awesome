@@ -18,9 +18,7 @@ function M:load_from_dir()
 	local util = delicious:get_class("delicious.util.file")
 	local i = 0
 	local imgpath = self:make_path(i)
-	print("imgpath:" .. imgpath) 
 	while imgpath and util.file_exists(delicious.ImageCache:get_path() .. imgpath) do
-		print('Animation [' .. i .. ']' .. imgpath)
 		self:insert_image(imgpath, 1)
 		i = i + 1
 		imgpath = self:make_path(i)

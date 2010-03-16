@@ -11,20 +11,6 @@ local M = delicious_class(delicious:get_class('delicious.workers.base'), functio
 	s:set_refresh(arg[2].refresh)
 end)
 
-
-function string:split(delimiter) -- must be moved 
-  local result = { }
-  local from  = 1
-  local delim_from, delim_to = string.find( self, delimiter, from  )
-  while delim_from do
-    table.insert( result, string.sub( self, from , delim_from-1 ) )
-    from  = delim_to + 1
-    delim_from, delim_to = string.find( self, delimiter, from  )
-  end
-  table.insert( result, string.sub( self, from  ) )
-  return result
-end
-
 local function minmax(t)
 	local min, max = nil
 	for i, n in pairs(t) do

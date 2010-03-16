@@ -1,8 +1,8 @@
 local M = delicious_class(delicious:get_class("delicious.base"), function(s, ...)
+	s:_base_init("delicious.fx.animation.image")
 	s.path = arg[1]
 	s.image = nil
 	s.duration = arg[2]
-	print("Adding image: " .. s.path)
 	s.image = delicious.ImageCache:get_image(s.path)
 end)
 
