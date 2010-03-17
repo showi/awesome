@@ -103,13 +103,7 @@ if _G.delicious then
 else
 	_G.delicious = M()
 	_G.delicious:_init()
-	_G.delicious.version = "0.1"
+	_G.delicious.version = "0.2"
 	setfenv(1, _G)
 end
-<<<<<<< .merge_file_v0LjYo
-delicious.version = "0.2"
-=======
-
-
->>>>>>> .merge_file_LyWbNl
 return delicious
