@@ -9,6 +9,8 @@ local table = table
 local _G = _G
 setfenv(1, {})
 
+local VERSION = "0.1"
+
 function string:split(delimiter) -- must be moved 
   local result = { } 
   local from  = 1 
@@ -58,6 +60,7 @@ local M = delicious_class(cbase, function(s, args)
 		end,
 	} 
 	s.parent = nil
+	s:debug("[ Delicious v" .. VERSION .. " ]")
 end)
 
 function M:_init()
@@ -103,7 +106,7 @@ if _G.delicious then
 else
 	_G.delicious = M()
 	_G.delicious:_init()
-	_G.delicious.version = "0.1"
+	_G.delicious.version = VERSION
 	setfenv(1, _G)
 end
 
