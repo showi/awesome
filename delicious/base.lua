@@ -1,3 +1,11 @@
+local delicious_class = delicious_class
+local delicious = delicious
+local require = require
+local tostring = tostring
+local pairs = pairs
+setfenv(1, {})
+
+
 local M = delicious_class(require("delicious.base_core"), function(s, args)
 	s:set_module_name("delicious.base")
 end)
