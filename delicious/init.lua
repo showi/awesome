@@ -107,5 +107,5 @@ else
 	--delicious = M()
 	--delicious:_init()
 end
-
+delicious.version = "0.1"
 return delicious
