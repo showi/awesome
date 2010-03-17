@@ -1,3 +1,11 @@
+local delicious_class = delicious_class
+local delicious = delicious
+local io = io
+local awful = awful
+local widget = widget
+local image = image
+setfenv(1, {})
+
 local M = delicious_class(delicious:get_class('delicious.base'), function(s, args)
 	s:_base_init("delicious.util.image_cache")
 	s.cache = {}

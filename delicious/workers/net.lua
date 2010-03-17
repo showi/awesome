@@ -1,3 +1,13 @@
+local delicious = delicious
+local delicious_class = delicious_class
+local io = io
+local string = string
+local math = math
+local tonumber = tonumber
+local pairs = pairs
+local os = os
+setfenv(1, {})
+
 local M = delicious_class(delicious:get_class('delicious.workers.base'), function(s, ...)
 	s:_base_init("delicious.workers.net")
 	s.parent = arg[1]

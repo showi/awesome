@@ -1,3 +1,11 @@
+local delicious_class = delicious_class
+local delicious =delicious
+local awful = awful
+local pairs = pairs 
+local table = table
+local type = type
+setfenv(1, {})
+
 local M = delicious_class(delicious:get_class("delicious.base_core"), function(s, ...)	
 	s:_base_init("delicious.menu")
 	s:set_parent(arg[1])

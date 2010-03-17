@@ -1,3 +1,9 @@
+local delicious = delicious
+local delicious_class = delicious_class
+local timer = timer
+local os = os
+setfenv(1, {})
+
 local M = delicious_class(delicious:get_class("delicious.base"), function(s, args)
 	s._base_init__parent = s._base_init
 	s.base_init = function(self)

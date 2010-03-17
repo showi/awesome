@@ -1,3 +1,11 @@
+local delicious_class = delicious_class
+local delicious = delicious
+local widget = widget
+local beautiful = beautiful
+local awful = awful
+local string = string
+setfenv(1, {})
+
 local M = delicious_class(delicious:get_class("delicious.widget.base"), function(s, ...)
 	s:_base_init("delicious.widget.net")
 	s:set_parent(delicious)

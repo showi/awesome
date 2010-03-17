@@ -1,3 +1,14 @@
+local string = string
+local require = require
+require('delicious.class')
+local delicious_class = delicious_class
+local setmetatable = setmetatable
+local print = print
+local setfenv = setfenv
+local table = table
+local _G = _G
+setfenv(1, {})
+
 function string:split(delimiter) -- must be moved 
   local result = { } 
   local from  = 1 
@@ -16,7 +27,6 @@ end
 	- delicious namespace to access all delicious functionality
 	- delicious_class function for creating new delicious class
 --]]
-require('delicious.class')
 local cbase = require("delicious.base")
 
 local M = delicious_class(cbase, function(s, args)
@@ -38,7 +48,15 @@ local M = delicious_class(cbase, function(s, args)
 				return s:get_class("delicious.fx." .. k)
 			end}
 		}
-	setmetatable(s.fx, s.fx.mt) 
+	setmetatable(s.fx, s.fx.mt)
+	s.string = {
+		nltws = function(str)
+			if not str then return nil end
+			str = string.match(str, "^%s*(.*)$")	
+			str = string.match(str, "^(.-)%s*$")
+			return str
+		end,
+	} 
 	s.parent = nil
 end)
 
@@ -80,10 +98,14 @@ function M:get_worker(id)
 	return self.Workers:get(id)
 end
 
-if delicious then
+if _G.delicious then
 	print("WARNING: delicious already defined")
 else
-	delicious = M()
-	delicious:_init()
+	_G.delicious = M()
+	_G.delicious:_init()
+	setfenv(1, _G)
+	--delicious = M()
+	--delicious:_init()
 end
+
 return delicious

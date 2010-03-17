@@ -1,3 +1,10 @@
+local delicious_class = delicious_class
+local delicious = delicious
+local io = io
+local os = os
+local assert = assert
+setfenv(1, {})
+
 local M = delicious_class(function(s, ...)
 	s:_base_init("delicious.util.file")
 end)

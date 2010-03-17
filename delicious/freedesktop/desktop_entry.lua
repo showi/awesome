@@ -1,3 +1,11 @@
+local delicious_class = delicious_class
+local delicious = delicious
+local awful = awful
+local pairs = pairs
+local io = io
+local string = string
+setfenv(1, {})
+
 local tag_start = "[Desktop Entry]"
 
 local valid_keys = {

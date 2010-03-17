@@ -1,3 +1,8 @@
+local delicious = delicious
+local delicious_class = delicious_class
+local widget = widget
+setfenv(1, {})
+
 local M = delicious_class(delicious:get_class('delicious.base'), function(s, ...)
 	s:_base_init("delicious.workers") 
 	s:set_parent(arg[1])

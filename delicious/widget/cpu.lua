@@ -1,3 +1,9 @@
+local delicious_class = delicious_class
+local delicious = delicious
+local awful = awful
+local beautiful = beautiful 
+setfenv(1, {})
+
 local M = delicious_class(delicious:get_class('delicious.widget.base'), function(s, ...)
 	s:_base_init("delicious.widget.cpu")
 	s:set_parent(delicious)

@@ -46,11 +46,13 @@ layouts =
 tags = {}
 for s = 1, screen.count() do
     -- Each screen has its own tag table.
-    tags[s] = awful.tag({ 'term', 'net', 'im', 'audio', 'graphism', 'other'}, s, layouts[2])
+    tags[s] = awful.tag({ 'term', 'net', 'im', 'audio', 'graphism', 'other'}, s, layouts[6])
 end
 -- }}}
 
 require("delicious")
+local battery = delicious:get_class("delicious.workers.bat")(delicious, {refresh = 13 })
+--os.exit(0)
 local anim_alien = {
 	a = delicious.fx.animation("smwqblock", {prefix = "game/", autoload = 1}),
 	w = widget({type = "imagebox"}),
@@ -327,9 +329,10 @@ root.keys(globalkeys)
 awful.rules.rules = {
     -- All clients will match this rule.
     { rule = { },
-      properties = { border_width =  0, -- beautiful.border_width,
+      properties = { border_width =  1, -- beautiful.border_width,
                      border_color = beautiful.border_normal,
                      focus = true,
+					 size_hints_honor = false,
                      keys = clientkeys,
                      buttons = clientbuttons } },
     { rule = { class = "MPlayer" },
@@ -383,5 +386,3 @@ end)
 
 client.add_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.add_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
---anim_alien.w:add_signal("mouse::enter", function(c) print("click")  end)
--- }}}

@@ -1,3 +1,10 @@
+local delicious_class = delicious_class
+local delicious = delicious
+local io = io
+local print = print
+local string = string
+setfenv(1, {})
+
 local M = delicious_class(delicious:get_class("delicious.base_core"), function(s, ...)
 
 end)

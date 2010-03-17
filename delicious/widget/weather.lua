@@ -1,3 +1,4 @@
+
 local M = delicious_class(delicious:get_class("delicious.widget.base"), function(s, ...)
 	s:_base_init("delicious.widget.weather")
 	s:set_parent(delicious)

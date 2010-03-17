@@ -1,3 +1,8 @@
+local delicious_class = delicious_class
+local string = string
+local print = print
+setfenv(1, {})
+
 local M = delicious_class(function(s, args)
 	s:set_module_name("delicious.base_core")
 end)

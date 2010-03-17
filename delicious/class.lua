@@ -1,3 +1,10 @@
+local _G = _G
+local type = type
+local setmetatable = setmetatable
+local pairs = pairs 
+
+setfenv(1, {})
+
 function delicious_class(base, init)
    local c = {}    -- a new class instance
    if not init and type(base) == 'function' then
@@ -44,4 +51,4 @@ function delicious_class(base, init)
    return c
 end
 
-return M
+_G.delicious_class = delicious_class

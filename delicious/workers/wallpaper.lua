@@ -1,3 +1,8 @@
+local delicious = delicious
+local delicious_class = delicious_class
+local os = os
+setfenv(1, {})
+
 local M = delicious_class(delicious:get_class('delicious.workers.base'), function(s, ...)
 	s:_base_init("delicious.workers.wallpaper")
 	s.parent = arg[1]
