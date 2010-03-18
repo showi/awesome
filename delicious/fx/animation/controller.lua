@@ -1,3 +1,9 @@
+local delicious = delicious
+local delicious_class = delicious_class
+local os = os
+local timer = timer
+setfenv(1, {})
+
 local M = delicious_class(delicious:get_class("delicious.base"), function(s, ...)
 	s:_base_init("delicious.fx.animation.controller")
 	s.widget = arg[1]

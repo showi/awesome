@@ -1,3 +1,7 @@
+local delicious = delicious
+local delicious_class = delicious_class
+setfenv(1, {})
+
 local M = delicious_class(delicious:get_class("delicious.base"), function(s, ...)
 	s:_base_init("delicious.fx.animation.image")
 	s.path = arg[1]
