@@ -4,6 +4,10 @@ local awful = awful
 local pairs = pairs 
 local table = table
 local type = type
+local string = string
+local os = os
+local tostring = tostring
+local print = print
 setfenv(1, {})
 
 local M = delicious_class(delicious:get_class("delicious.base_core"), function(s, ...)	
@@ -94,6 +98,13 @@ function M:build(list)
 	end
 end
 
+function M:replace_tag(s)
+	s = string.gsub(s, "%%F", os.getenv("HOME") or "")
+	s = string.gsub(s, "%%%w", "")
+	self:debug("str: " .. s)
+	return s
+end
+
 function M:get(root)
 	if not root then root = self.data end
 	local menu = {}
@@ -102,10 +113,12 @@ function M:get(root)
 		local file = root:get("Icon") or root:get("Name")
 		local icon =  self:probe_icon(file)
 		local lang = self.prop.lang
+		local exec = self:replace_tag(root:get("Exec"))
+		print("Icon: " .. tostring(icon))
 		if icon then
-			return  root:get("Name", lang),root:get("Exec"), icon
+			return  root:get("Name", lang), exec, icon
 		else
-			return  root:get("Name", lang),root:get("Exec")
+			return  root:get("Name", lang), exec
 		end
 	end
 	for c, t in pairs(root) do
